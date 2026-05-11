@@ -1,0 +1,73 @@
+package com.tienda.ms_producto.controller;
+
+import com.tienda.ms_producto.model.Producto;
+import com.tienda.ms_producto.service.ProductoService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/productos")
+public class ProductoController {
+
+    @Autowired
+    private ProductoService productoService;
+
+    @GetMapping
+    public ResponseEntity<List<Producto>> findAll(){
+        List<Producto> productos = productoService.findAll();
+        if (productos.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(productos);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Producto> findById(@PathVariable Integer id) {
+        Producto producto = productoService.findById(id);
+        return ResponseEntity.ok(producto);
+    }
+
+    @PostMapping
+    public ResponseEntity<Producto> save(@RequestBody Producto producto) {
+        return new ResponseEntity<>(productoService.save(producto), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> update(@PathVariable Integer id, @RequestBody Producto producto) {
+        Producto existing = productoService.findById(id);
+        existing.setNombre_producto(producto.getNombre_producto());
+        return ResponseEntity.ok(productoService.save(existing));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        productoService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/activar")
+    public ResponseEntity<Producto> activar(@PathVariable Integer id) {
+        Producto existing = productoService.findById(id);
+        existing.setActivo(true);
+        return ResponseEntity.ok(productoService.save(existing));
+    }
+
+    @PutMapping("/{id}/desactivar")
+    public ResponseEntity<Producto> desactivar(@PathVariable Integer id) {
+        Producto existing = productoService.findById(id);
+        existing.setActivo(false);
+        return ResponseEntity.ok(productoService.save(existing));
+    }
+}
