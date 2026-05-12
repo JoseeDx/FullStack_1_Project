@@ -3,6 +3,8 @@ package com.tienda.ms_producto.controller;
 import com.tienda.ms_producto.model.Producto;
 import com.tienda.ms_producto.service.ProductoService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,12 +42,12 @@ public class ProductoController {
     }
 
     @PostMapping
-    public ResponseEntity<Producto> save(@RequestBody Producto producto) {
+    public ResponseEntity<Producto> save(@Valid @RequestBody Producto producto) {
         return new ResponseEntity<>(productoService.save(producto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> update(@PathVariable Integer id, @RequestBody Producto producto) {
+    public ResponseEntity<Producto> update(@PathVariable Integer id, @Valid @RequestBody Producto producto) {
         Producto existing = productoService.findById(id);
         existing.setNombre_producto(producto.getNombre_producto());
         return ResponseEntity.ok(productoService.save(existing));
