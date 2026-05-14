@@ -39,7 +39,7 @@ public class TransaccionController {
 
     @PostMapping
     public ResponseEntity<Transaccion> save(@RequestBody Transaccion transaccion) {
-        log.info("Creando transaccion")
+        log.info("Creando transaccion");
         return new ResponseEntity<>(transaccionService.save(transaccion), HttpStatus.CREATED);
     }
 

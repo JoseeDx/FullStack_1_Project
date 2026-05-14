@@ -42,7 +42,7 @@ public class ProductoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Producto> findById(@PathVariable Integer id) {
-        log.info("Obteniendo producto con ID: {}",id)
+        log.info("Obteniendo producto con ID: {}",id);
         Producto producto = productoService.findById(id);
         return ResponseEntity.ok(producto);
     }
@@ -63,14 +63,14 @@ public class ProductoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        log.info("Eliminando producto con ID: {}", id)
+        log.info("Eliminando producto con ID: {}", id);
         productoService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/activar")
     public ResponseEntity<Producto> activar(@PathVariable Integer id) {
-        log.info("Activando producto con ID: {}", id)
+        log.info("Activando producto con ID: {}", id);
         Producto existing = productoService.findById(id);
         existing.setActivo(true);
         return ResponseEntity.ok(productoService.save(existing));
@@ -78,7 +78,7 @@ public class ProductoController {
 
     @PutMapping("/{id}/desactivar")
     public ResponseEntity<Producto> desactivar(@PathVariable Integer id) {
-        lig.info("Desactivando producto con ID: {}", id)
+        log.info("Desactivando producto con ID: {}", id);
         Producto existing = productoService.findById(id);
         existing.setActivo(false);
         return ResponseEntity.ok(productoService.save(existing));
