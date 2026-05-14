@@ -23,3 +23,13 @@ spring:
             uri: http://localhost:9093
             predicates:
             - Path=/productos/**
+
+          - id: ms-transaccion
+            uri: http://localhost:9094
+            predicates:
+            - Path=/transacciones/**
+
+          - id: ms-producto
+            uri: http://localhost:9095
+            predicates:
+            - Path=/productos/**
