@@ -23,6 +23,7 @@ public class ProductoDTO {
     @Size(max = 150, message = "Máximo 150 caracteres")
     private String nombre_producto;
 
+    @NotBlank(message = "La descripcion no puede estar vacía")
     @Size(max = 500, message = "Máximo 500 caracteres")
     private String descripcion_producto;
 
@@ -34,7 +35,7 @@ public class ProductoDTO {
     private Integer id_categoria; 
 
     public Producto toModel() {
-        return new Producto(id_producto, nombre_producto, descripcion_producto, precio_producto, id_categoria, null);                                                                                 
+        return new Producto(id_producto, nombre_producto, descripcion_producto, precio_producto, id_categoria, true);                                                                                 
     }
 
     public static ProductoDTO fromModel(Producto p){
