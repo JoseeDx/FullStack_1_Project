@@ -1,15 +1,16 @@
 package com.tienda.ms_producto.controller;
 
+import com.tienda.ms_producto.dto.CategoriaDTO;
 import com.tienda.ms_producto.model.Categoria;
 import com.tienda.ms_producto.service.CategoriaService;
 
 import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,33 +32,37 @@ public class CategoriaController {
     private CategoriaService categoriaService;
 
     @GetMapping
-    public ResponseEntity<List<Categoria>> findAll(){
+    public ResponseEntity<List<CategoriaDTO>> findAll(){
         log.info("Obteniendo todas las categorias");
-        List<Categoria> categorias = categoriaService.findAll();
+        List<CategoriaDTO> categorias = categoriaService.findAll()
+                .stream()
+                .map(CategoriaDTO::fromModel)
+                .toList();
         if (categorias.isEmpty()){
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(categorias);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> findById(@PathVariable Integer id) {
+    public ResponseEntity<CategoriaDTO> findById(@PathVariable Integer id) {
         log.info("Obteniendo categoria con ID: {}", id);
         Categoria categoria = categoriaService.findById(id);
-        return ResponseEntity.ok(categoria);
+        return ResponseEntity.ok(CategoriaDTO.fromModel(categoria));
     }
 
     @PostMapping
-    public ResponseEntity<Categoria> save(@Valid @RequestBody Categoria categoria) {
-        log.info("Creando nueva categoria: {}", categoria.getNombre_categoria());
-        return new ResponseEntity<>(categoriaService.save(categoria), HttpStatus.CREATED);
+    public ResponseEntity<CategoriaDTO> save(@Valid @RequestBody CategoriaDTO dto) {
+        log.info("Creando nueva categoria: {}", dto.getNombre_categoria());
+        Categoria saved = categoriaService.save(dto.toModel());
+        return new ResponseEntity<>(CategoriaDTO.fromModel(saved), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> update(@PathVariable Integer id, @Valid @RequestBody Categoria categoria) {
+    public ResponseEntity<CategoriaDTO> update(@PathVariable Integer id, @Valid @RequestBody CategoriaDTO dto) {
         log.info("Actualizando categoria con id: {}", id);
         Categoria existing = categoriaService.findById(id);
-        existing.setNombre_categoria(categoria.getNombre_categoria());
-        return ResponseEntity.ok(categoriaService.save(existing));
+        existing.setNombre_categoria(dto.getNombre_categoria());
+        return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.save(existing)));
     }
 
     @DeleteMapping("/{id}")
@@ -67,20 +72,20 @@ public class CategoriaController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/activar")
-    public ResponseEntity<Categoria> activar(@PathVariable Integer id) {
+    @PatchMapping("/{id}/activar")
+    public ResponseEntity<CategoriaDTO> activar(@PathVariable Integer id) {
         log.info("Activando categoria con id: {}", id);
         Categoria existing = categoriaService.findById(id);
         existing.setActivo(true);
-        return ResponseEntity.ok(categoriaService.save(existing));
+        return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.save(existing)));
     }
 
-    @PutMapping("/{id}/desactivar")
-    public ResponseEntity<Categoria> desactivar(@PathVariable Integer id) {
+    @PatchMapping("/{id}/desactivar")
+    public ResponseEntity<CategoriaDTO> desactivar(@PathVariable Integer id) {
         log.info("Desactivando categoria con id: {}", id);
         Categoria existing = categoriaService.findById(id);
         existing.setActivo(false);
-        return ResponseEntity.ok(categoriaService.save(existing));
+        return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.save(existing)));
     }
 
 }
