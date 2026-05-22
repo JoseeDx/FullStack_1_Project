@@ -26,7 +26,7 @@ import java.util.List;
 @RequestMapping("/api/v1/categorias")
 public class CategoriaController {
 
-    public static Logger log = LoggerFactory.getLogger(CategoriaController.class);
+    private static Logger log = LoggerFactory.getLogger(CategoriaController.class);
 
     @Autowired
     private CategoriaService categoriaService;

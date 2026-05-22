@@ -1,15 +1,16 @@
 package com.tienda.ms_producto.controller;
 
+import com.tienda.ms_producto.dto.ProductoDTO;
 import com.tienda.ms_producto.model.Producto;
 import com.tienda.ms_producto.service.ProductoService;
 
 import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,9 +32,12 @@ public class ProductoController {
     private ProductoService productoService;
 
     @GetMapping
-    public ResponseEntity<List<Producto>> findAll(){
+    public ResponseEntity<List<ProductoDTO>> findAll(){
         log.info("Obteniendo todos los productos.");
-        List<Producto> productos = productoService.findAll();
+        List<ProductoDTO> productos = productoService.findAll()
+                .stream()
+                .map(ProductoDTO::fromModel)
+                .toList();
         if (productos.isEmpty()){
             return ResponseEntity.noContent().build();
         }
@@ -41,24 +45,28 @@ public class ProductoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> findById(@PathVariable Integer id) {
+    public ResponseEntity<ProductoDTO> findById(@PathVariable Integer id) {
         log.info("Obteniendo producto con ID: {}",id);
         Producto producto = productoService.findById(id);
-        return ResponseEntity.ok(producto);
+        return ResponseEntity.ok(ProductoDTO.fromModel(producto));
     }
 
     @PostMapping
-    public ResponseEntity<Producto> save(@Valid @RequestBody Producto producto) {
-        log.info("Creando nuevo producto: {}", producto.getNombre_producto());
-        return new ResponseEntity<>(productoService.save(producto), HttpStatus.CREATED);
+    public ResponseEntity<ProductoDTO> save(@Valid @RequestBody ProductoDTO dto) {
+        log.info("Creando nuevo producto: {}", dto.getNombre_producto());
+        Producto saved = productoService.save(dto.toModel());
+        return new ResponseEntity<>(ProductoDTO.fromModel(saved), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> update(@PathVariable Integer id, @Valid @RequestBody Producto producto) {
+    public ResponseEntity<ProductoDTO> update(@PathVariable Integer id, @Valid @RequestBody ProductoDTO dto) {
         log.info("Actualizando producto con ID: {}", id);
         Producto existing = productoService.findById(id);
-        existing.setNombre_producto(producto.getNombre_producto());
-        return ResponseEntity.ok(productoService.save(existing));
+        existing.setNombre_producto(dto.getNombre_producto());
+        existing.setDescripcion_producto(dto.getDescripcion_producto());
+        existing.setPrecio_producto(dto.getPrecio_producto());
+        existing.setId_categoria(dto.getId_categoria());
+        return ResponseEntity.ok(ProductoDTO.fromModel(productoService.save(existing)));
     }
 
     @DeleteMapping("/{id}")
@@ -68,19 +76,19 @@ public class ProductoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/activar")
-    public ResponseEntity<Producto> activar(@PathVariable Integer id) {
+    @PatchMapping("/{id}/activar")
+    public ResponseEntity<ProductoDTO> activar(@PathVariable Integer id) {
         log.info("Activando producto con ID: {}", id);
         Producto existing = productoService.findById(id);
         existing.setActivo(true);
-        return ResponseEntity.ok(productoService.save(existing));
+        return ResponseEntity.ok(ProductoDTO.fromModel(productoService.save(existing)));
     }
 
-    @PutMapping("/{id}/desactivar")
-    public ResponseEntity<Producto> desactivar(@PathVariable Integer id) {
+    @PatchMapping("/{id}/desactivar")
+    public ResponseEntity<ProductoDTO> desactivar(@PathVariable Integer id) {
         log.info("Desactivando producto con ID: {}", id);
         Producto existing = productoService.findById(id);
         existing.setActivo(false);
-        return ResponseEntity.ok(productoService.save(existing));
+        return ResponseEntity.ok(ProductoDTO.fromModel(productoService.save(existing)));
     }
 }
