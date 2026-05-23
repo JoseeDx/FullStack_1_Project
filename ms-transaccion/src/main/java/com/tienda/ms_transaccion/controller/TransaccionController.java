@@ -24,7 +24,7 @@ public class TransaccionController {
 
     @GetMapping
     public ResponseEntity<List<TransaccionDTO>> findAll() {
-        log.info("Obteniendo todas las transacciones");
+        log.info("GET /transacciones - Listando todas las transacciones");
         List<TransaccionDTO> transacciones = transaccionService.findAll()
                 .stream()
                 .map(TransaccionDTO::fromModel)
@@ -37,21 +37,21 @@ public class TransaccionController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TransaccionDTO> findById(@PathVariable Integer id) {
-        log.info("Obteniendo transaccion con ID: {}", id);
+        log.info("GET /transacciones/{} - Buscando transaccion", id);
         Transaccion transaccion = transaccionService.findById(id);
         return ResponseEntity.ok(TransaccionDTO.fromModel(transaccion));
     }
 
     @PostMapping
     public ResponseEntity<TransaccionDTO> save(@Valid @RequestBody TransaccionDTO dto) {
-        log.info("Creando transaccion");
+        log.info("POST /transacciones - Creando transaccion");
         Transaccion saved = transaccionService.save(dto.toModel());
         return new ResponseEntity<>(TransaccionDTO.fromModel(saved), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<TransaccionDTO> update(@PathVariable Integer id, @Valid @RequestBody TransaccionDTO dto) {
-        log.info("Actualizando transaccion con ID: {}", id);
+        log.info("PUT /transacciones/{} - Actualizando transaccion", id);
         Transaccion existing = transaccionService.findById(id);
         existing.setId_pedido(dto.getId_pedido());
         existing.setId_usuario(dto.getId_usuario());
@@ -64,8 +64,14 @@ public class TransaccionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        log.info("Eliminando transaccion con ID: {}", id);
+        log.info("DELETE /transacciones/{} - Eliminando transaccion", id);
         transaccionService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<TransaccionDTO> updateEstado(@PathVariable Integer id, @RequestParam String estado) {
+        log.info("PATCH /transacciones/{}/estado - Cambiando estado a {}", id, estado);
+        return ResponseEntity.ok(TransaccionDTO.fromModel(transaccionService.updateEstado(id, estado)));
     }
 }

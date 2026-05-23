@@ -1,6 +1,7 @@
 package com.tienda.ms_producto.controller;
 
 import com.tienda.ms_producto.dto.ProductoDTO;
+import com.tienda.ms_producto.model.Categoria;
 import com.tienda.ms_producto.model.Producto;
 import com.tienda.ms_producto.service.ProductoService;
 
@@ -65,7 +66,9 @@ public class ProductoController {
         existing.setNombre_producto(dto.getNombre_producto());
         existing.setDescripcion_producto(dto.getDescripcion_producto());
         existing.setPrecio_producto(dto.getPrecio_producto());
-        existing.setId_categoria(dto.getId_categoria());
+        Categoria cat = new Categoria();
+        cat.setId_categoria(dto.getId_categoria());
+        existing.setCategoria(cat);
         return ResponseEntity.ok(ProductoDTO.fromModel(productoService.save(existing)));
     }
 

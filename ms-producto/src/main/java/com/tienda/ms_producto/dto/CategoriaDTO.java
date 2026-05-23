@@ -20,14 +20,16 @@ public class CategoriaDTO {
     @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
     private String nombre_categoria;
 
+    private Boolean activo;
+
     public Categoria toModel(){
-        return new Categoria(id_categoria, nombre_categoria, null);
+        return new Categoria(id_categoria, nombre_categoria, true);
     }
 
     public static CategoriaDTO fromModel(Categoria c){
         if (c == null)
              return null;
-        return new CategoriaDTO(c.getId_categoria(),c.getNombre_categoria());
+        return new CategoriaDTO(c.getId_categoria(), c.getNombre_categoria(), c.getActivo());
     }
 
 }

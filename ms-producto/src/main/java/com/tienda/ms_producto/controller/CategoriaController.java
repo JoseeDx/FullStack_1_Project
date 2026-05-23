@@ -33,7 +33,7 @@ public class CategoriaController {
 
     @GetMapping
     public ResponseEntity<List<CategoriaDTO>> findAll(){
-        log.info("Obteniendo todas las categorias");
+        log.info("GET /categorias - Listando todas las categorias");
         List<CategoriaDTO> categorias = categoriaService.findAll()
                 .stream()
                 .map(CategoriaDTO::fromModel)
@@ -45,21 +45,21 @@ public class CategoriaController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<CategoriaDTO> findById(@PathVariable Integer id) {
-        log.info("Obteniendo categoria con ID: {}", id);
+        log.info("GET /categorias/{} - Buscando categoria", id);
         Categoria categoria = categoriaService.findById(id);
         return ResponseEntity.ok(CategoriaDTO.fromModel(categoria));
     }
 
     @PostMapping
     public ResponseEntity<CategoriaDTO> save(@Valid @RequestBody CategoriaDTO dto) {
-        log.info("Creando nueva categoria: {}", dto.getNombre_categoria());
+        log.info("POST /categorias - Creando categoria: {}", dto.getNombre_categoria());
         Categoria saved = categoriaService.save(dto.toModel());
         return new ResponseEntity<>(CategoriaDTO.fromModel(saved), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoriaDTO> update(@PathVariable Integer id, @Valid @RequestBody CategoriaDTO dto) {
-        log.info("Actualizando categoria con id: {}", id);
+        log.info("PUT /categorias/{} - Actualizando categoria", id);
         Categoria existing = categoriaService.findById(id);
         existing.setNombre_categoria(dto.getNombre_categoria());
         return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.save(existing)));
@@ -67,14 +67,14 @@ public class CategoriaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        log.info("Eliminando categoria con id: {}", id);
+        log.info("DELETE /categorias/{} - Eliminando categoria", id);
         categoriaService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/activar")
     public ResponseEntity<CategoriaDTO> activar(@PathVariable Integer id) {
-        log.info("Activando categoria con id: {}", id);
+        log.info("PATCH /categorias/{}/activar - Activando categoria", id);
         Categoria existing = categoriaService.findById(id);
         existing.setActivo(true);
         return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.save(existing)));
@@ -82,11 +82,9 @@ public class CategoriaController {
 
     @PatchMapping("/{id}/desactivar")
     public ResponseEntity<CategoriaDTO> desactivar(@PathVariable Integer id) {
-        log.info("Desactivando categoria con id: {}", id);
-        Categoria existing = categoriaService.findById(id);
-        existing.setActivo(false);
-        return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.save(existing)));
-    }
+        log.info("PATCH /categorias/{}/desactivar - Desactivando categoria", id);
+        return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.desactivar(id)));
 
-}
+    }
+}   
 

@@ -1,5 +1,6 @@
 package com.tienda.ms_producto.dto;
 
+import com.tienda.ms_producto.model.Categoria;
 import com.tienda.ms_producto.model.Producto;
 
 import jakarta.validation.constraints.NotBlank;
@@ -35,13 +36,15 @@ public class ProductoDTO {
     private Integer id_categoria; 
 
     public Producto toModel() {
-        return new Producto(id_producto, nombre_producto, descripcion_producto, precio_producto, id_categoria, true);                                                                                 
+        Categoria cat = new Categoria();
+        cat.setId_categoria(id_categoria);
+        return new Producto(id_producto, nombre_producto, descripcion_producto, precio_producto, cat, true);                                                                                 
     }
 
     public static ProductoDTO fromModel(Producto p){
         if (p == null)
              return null;
-        return new ProductoDTO(p.getId_producto(),p.getNombre_producto(),p.getDescripcion_producto(),p.getPrecio_producto(),p.getId_categoria());
+        return new ProductoDTO(p.getId_producto(),p.getNombre_producto(),p.getDescripcion_producto(),p.getPrecio_producto(),p.getCategoria() != null ? p.getCategoria().getId_categoria() : null);
     }
 
 }

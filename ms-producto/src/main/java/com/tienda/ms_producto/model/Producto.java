@@ -25,8 +25,9 @@ public class Producto {
     @Column(nullable = false)
     private Double precio_producto; //Tengo que arreglar todo esto pero es para tener una idea
     
-    @Column(nullable = false)
-    private Integer id_categoria;
+    @ManyToOne
+    @JoinColumn(name = "id_categoria", nullable = false)
+    private Categoria categoria;
 
     @Column(nullable = false)
     private Boolean activo = true;

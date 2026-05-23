@@ -1,7 +1,10 @@
 package com.tienda.ms_producto.service;
 
 import com.tienda.ms_producto.model.Categoria;
+import com.tienda.ms_producto.model.Producto;
 import com.tienda.ms_producto.repository.CategoriaRepository;
+import com.tienda.ms_producto.repository.ProductoRepository;
+
 import jakarta.transaction.Transactional;
 
 import org.slf4j.Logger;
@@ -19,6 +22,9 @@ public class CategoriaService {
 
     @Autowired
     private CategoriaRepository categoriaRepository;
+
+    @Autowired
+    private ProductoRepository productoRepository;
 
     public List<Categoria> findAll() {
         log.info("Consultando todas las categorias");
@@ -38,5 +44,19 @@ public class CategoriaService {
     public void delete(Integer id){
         log.info("Borrando categoria con ID: {}", id);
         categoriaRepository.deleteById(id);
+    }
+
+    public Categoria desactivar(Integer id) {
+        Categoria existing = findById(id);
+    
+        List<Producto> productosActivos = productoRepository.findByCategoriaIdCategoriaAndActivoTrue(id);
+        if (!productosActivos.isEmpty()) {
+            log.warn("No se puede desactivar categoria ID: {} tiene {} productos activos", id, productosActivos.size());
+            throw new RuntimeException("No se puede desactivar una categoría con productos activos");
+        }
+        existing.setActivo(false);
+        log.info("Desactivando categoria ID: {}",id);
+        return categoriaRepository.save(existing);
+
     }
 }
