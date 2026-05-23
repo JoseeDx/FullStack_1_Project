@@ -1,5 +1,7 @@
 package com.tienda.ms_transaccion.service;
 
+import com.tienda.ms_transaccion.exception.BadRequestException;
+import com.tienda.ms_transaccion.exception.ResourceNotFoundException;
 import com.tienda.ms_transaccion.model.Transaccion;
 import com.tienda.ms_transaccion.repository.TransaccionRepository;
 import jakarta.transaction.Transactional;
@@ -35,7 +37,7 @@ public class TransaccionService {
             return transaccionRepository.findById(id).get();
         } catch (Exception e){
             log.warn("Transaccion con ID: {} no encontrada", id);
-            throw new RuntimeException("Transaccion no encontrada con ID: " + id); 
+            throw new ResourceNotFoundException("Transaccion no encontrada con ID: " + id);
         }
                
     }
@@ -64,7 +66,7 @@ public class TransaccionService {
         List<String> estadosValidos = List.of("PENDIENTE", "COMPLETADA", "ANULADA");
         if (!estadosValidos.contains(estado)) {
             log.warn("Estado invalido recibido: {}", estado);
-            throw new RuntimeException("Estado no valido. Debe ser: PENDIENTE, COMPLETADA o ANULADA");
+            throw new BadRequestException("Estado no valido. Debe ser: PENDIENTE, COMPLETADA o ANULADA");
         }
         try {      
             Transaccion existing = findById(id);
