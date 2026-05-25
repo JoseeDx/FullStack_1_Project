@@ -1,5 +1,6 @@
 package com.tienda.ms_carrito.service;
 
+import com.tienda.ms_carrito.client.ClienteClient;
 import com.tienda.ms_carrito.client.ProductoClient;
 import com.tienda.ms_carrito.client.ProductoResponse;
 import com.tienda.ms_carrito.exception.BadRequestException;
@@ -21,6 +22,9 @@ public class CarritoItemService {
 
     private static Logger log = LoggerFactory.getLogger(CarritoItemService.class);
 
+    @Autowired
+    private ClienteClient clienteClient;
+    
     @Autowired
     private CarritoItemRepository carritoItemRepository;
 
@@ -73,6 +77,12 @@ public class CarritoItemService {
     public CarritoItem save(CarritoItem carritoItem) {
         log.info("Guardando item en el carrito");
         try {
+            // Verifica que el cliente existe
+            Boolean clienteExiste = clienteClient.existeCliente(Long.valueOf(carritoItem.getId_cliente()));
+            if (!clienteExiste) {
+                log.warn("Cliente con ID: {} no encontrado", carritoItem.getId_cliente());
+                throw new BadRequestException("El cliente no existe");
+            }
             // Verifica que el producto existe y esta activo
             ProductoResponse producto = productoClient.findById(carritoItem.getId_producto());
             if (producto == null || !producto.getActivo()) {
