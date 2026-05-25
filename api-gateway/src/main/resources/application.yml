@@ -3,7 +3,7 @@ server:
 
 spring:
   main:
-      web-application-type: reactive
+    web-application-type: reactive
   cloud:
     gateway:
       server:
@@ -12,24 +12,24 @@ spring:
           - id: cliente-service
             uri: http://localhost:9091
             predicates:
-            - Path=/clientes/**
+            - Path=/api/v1/clientes/**
 
-          - id: compra-service
-            uri: http://localhost:9092
+          - id: ms-carrito
+            uri: http://localhost:8084
             predicates:
-            - Path=/compras/**
-          
-          - id: producto-service
-            uri: http://localhost:9093
-            predicates:
-            - Path=/productos/**
+            - Path=/api/v1/carrito/**
 
-          - id: ms-transaccion
+          - id: ms-pedido
             uri: http://localhost:9094
             predicates:
-            - Path=/transacciones/**
+            - Path=/api/v1/pedidos/**
 
           - id: ms-producto
-            uri: http://localhost:9095
+            uri: http://localhost:8081
             predicates:
-            - Path=/productos/**
+            - Path=/api/v1/productos/**
+
+          - id: ms-transaccion
+            uri: http://localhost:8085
+            predicates:
+            - Path=/api/v1/transacciones/**
