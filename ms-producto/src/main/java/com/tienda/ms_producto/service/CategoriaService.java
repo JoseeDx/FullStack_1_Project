@@ -1,5 +1,7 @@
 package com.tienda.ms_producto.service;
 
+import com.tienda.ms_producto.exception.ResourceNotFoundException;
+import com.tienda.ms_producto.exception.BadRequestException;
 import com.tienda.ms_producto.model.Categoria;
 import com.tienda.ms_producto.model.Producto;
 import com.tienda.ms_producto.repository.CategoriaRepository;
@@ -28,35 +30,59 @@ public class CategoriaService {
 
     public List<Categoria> findAll() {
         log.info("Consultando todas las categorias");
-        return categoriaRepository.findAll();
-    }
+        try {
+            return categoriaRepository.findAll();
+        } catch (Exception e) {
+            log.error("Error al consultar categorias: {}", e.getMessage());
+            throw new RuntimeException("Error al obtener las categorias");   
+        }
+    }    
 
     public Categoria findById(Integer id){
         log.info("Obteniendo categoria con ID: {}", id);
-        return categoriaRepository.findById(id).get();
+        try {
+            return categoriaRepository.findById(id).get();
+        } catch (Exception e) {
+            log.warn("Categoria con ID: {} no encontrada", id);
+            throw new ResourceNotFoundException("Categoria no encontrada con ID: " + id);
+        }
     }
 
     public Categoria save(Categoria categoria){
         log.info("Guardando categoria: {}", categoria.getNombre_categoria());
-        return categoriaRepository.save(categoria);
+        try {
+            return categoriaRepository.save(categoria);
+        } catch (Exception e) {
+            log.error("Error al guardar categoria: {}", e.getMessage());
+            throw new RuntimeException("Error al guardar la categoria");
+        }
     }
 
     public void delete(Integer id){
         log.info("Borrando categoria con ID: {}", id);
-        categoriaRepository.deleteById(id);
+        try {
+            categoriaRepository.deleteById(id);
+        } catch (Exception e) {
+            log.error("Error al eliminar categoria con ID: {}", id);
+            throw new RuntimeException("Error al eliminar la categoria");
+
+        }
     }
 
     public Categoria desactivar(Integer id) {
-        Categoria existing = findById(id);
-    
         List<Producto> productosActivos = productoRepository.findByCategoriaIdCategoriaAndActivoTrue(id);
         if (!productosActivos.isEmpty()) {
             log.warn("No se puede desactivar categoria ID: {} tiene {} productos activos", id, productosActivos.size());
-            throw new RuntimeException("No se puede desactivar una categoría con productos activos");
+            throw new BadRequestException("No se puede desactivar una categoría con productos activos");
         }
-        existing.setActivo(false);
-        log.info("Desactivando categoria ID: {}",id);
-        return categoriaRepository.save(existing);
-
+        try {
+            Categoria existing = findById(id);
+            existing.setActivo(false);
+            log.info("Desactivando categoria ID: {}",id);
+            return categoriaRepository.save(existing);
+        } catch (Exception e) {
+            log.error("Error al desactivar categoria con ID: {}", id);
+            throw new RuntimeException("Error al desactivar categoria");
+        }
     }
 }
