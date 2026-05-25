@@ -1,0 +1,7 @@
+com\example\producto_service\ProductoServiceApplication.class
+com\example\producto_service\controller\ProductoController.class
+com\example\producto_service\model\Producto.class
+com\example\producto_service\service\ProductoService.class
+com\example\producto_service\repository\ProductoRepository.class
+com\example\producto_service\dto\ProductoDTO$ProductoDTOBuilder.class
+com\example\producto_service\dto\ProductoDTO.class
