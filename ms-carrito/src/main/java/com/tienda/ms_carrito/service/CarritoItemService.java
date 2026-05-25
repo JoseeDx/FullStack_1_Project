@@ -1,5 +1,8 @@
 package com.tienda.ms_carrito.service;
 
+import com.tienda.ms_carrito.client.ProductoClient;
+import com.tienda.ms_carrito.client.ProductoResponse;
+import com.tienda.ms_carrito.exception.BadRequestException;
 import com.tienda.ms_carrito.exception.ResourceNotFoundException;
 import com.tienda.ms_carrito.model.CarritoItem;
 import com.tienda.ms_carrito.repository.CarritoItemRepository;
@@ -20,6 +23,9 @@ public class CarritoItemService {
 
     @Autowired
     private CarritoItemRepository carritoItemRepository;
+
+    @Autowired
+    private ProductoClient productoClient;
 
     public List<CarritoItem> findAll() {
         log.info("Consultando todos los items del carrito");
@@ -67,11 +73,22 @@ public class CarritoItemService {
     public CarritoItem save(CarritoItem carritoItem) {
         log.info("Guardando item en el carrito");
         try {
-            return carritoItemRepository.save(carritoItem);
-        } catch (Exception e) {
-            log.error("Error al guardar item del carrito: {}", e.getMessage());
-            throw new RuntimeException("Error al guardar el item del carrito");
-        }
+            // Verifica que el producto existe y esta activo
+            ProductoResponse producto = productoClient.findById(carritoItem.getId_producto());
+            if (producto == null || !producto.getActivo()) {
+                log.warn("Producto con ID: {} no disponible", carritoItem.getId_producto());
+                throw new BadRequestException("El producto no existe o no está disponible");
+            }
+        // Asignar el precio actual del producto
+        carritoItem.setPrecio_unitario(producto.getPrecio_producto());
+        return carritoItemRepository.save(carritoItem);
+    } catch (BadRequestException e) {
+        throw e;
+    } catch (Exception e) {
+        log.error("Error al guardar item del carrito: {}", e.getMessage());
+        throw new RuntimeException("Error al guardar el item del carrito");
+    }
+
     }
 
     public void delete(Integer id) {
