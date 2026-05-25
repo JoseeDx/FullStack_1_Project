@@ -1,5 +1,7 @@
 package com.tienda.ms_transaccion.service;
 
+import com.tienda.ms_transaccion.client.PedidoClient;
+import com.tienda.ms_transaccion.client.PedidoResponse;
 import com.tienda.ms_transaccion.exception.BadRequestException;
 import com.tienda.ms_transaccion.exception.ResourceNotFoundException;
 import com.tienda.ms_transaccion.model.Transaccion;
@@ -20,6 +22,9 @@ public class TransaccionService {
 
     @Autowired
     private TransaccionRepository transaccionRepository;
+
+    @Autowired
+    private PedidoClient pedidoClient;
     
     public List<Transaccion> findAll() {
         log.info("Consultando todas las transacciones");
@@ -45,8 +50,16 @@ public class TransaccionService {
     public Transaccion save(Transaccion transaccion) {
         log.info("Guardando transaccion");
         try {
+            // Verificar que el pedido existe
+            PedidoResponse pedido = pedidoClient.findById(Long.valueOf(transaccion.getId_pedido()));
+            if (pedido == null) {
+                log.warn("Pedido con ID: {} no encontrado", transaccion.getId_pedido());
+                throw new BadRequestException("El pedido no existe");
+            }
             return transaccionRepository.save(transaccion);
-        } catch (Exception e){
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
             log.error("Error al guardar transaccion: {}", e.getMessage());
             throw new RuntimeException("Error al guardar la transaccion");
         }
