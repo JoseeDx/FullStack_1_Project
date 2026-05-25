@@ -20,6 +20,8 @@ public class ProductoDTO {
 
     private Integer id_producto;
 
+    private Boolean activo;
+
     @NotBlank(message = "El nombre no puede estar vacío")
     @Size(max = 150, message = "Máximo 150 caracteres")
     private String nombre_producto;
@@ -44,7 +46,7 @@ public class ProductoDTO {
     public static ProductoDTO fromModel(Producto p){
         if (p == null)
              return null;
-        return new ProductoDTO(p.getId_producto(),p.getNombre_producto(),p.getDescripcion_producto(),p.getPrecio_producto(),p.getCategoria() != null ? p.getCategoria().getId_categoria() : null);
+        return new ProductoDTO(p.getId_producto(),p.getActivo(),p.getNombre_producto(),p.getDescripcion_producto(),p.getPrecio_producto(),p.getCategoria() != null ? p.getCategoria().getId_categoria() : null);
     }
 
 }
