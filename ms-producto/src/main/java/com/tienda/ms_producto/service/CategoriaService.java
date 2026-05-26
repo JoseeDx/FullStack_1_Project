@@ -70,7 +70,7 @@ public class CategoriaService {
     }
 
     public Categoria desactivar(Integer id) {
-        List<Producto> productosActivos = productoRepository.findByCategoriaIdCategoriaAndActivoTrue(id);
+        List<Producto> productosActivos = productoRepository.findByCategoriaAndActivoTrue(id);
         if (!productosActivos.isEmpty()) {
             log.warn("No se puede desactivar categoria ID: {} tiene {} productos activos", id, productosActivos.size());
             throw new BadRequestException("No se puede desactivar una categoría con productos activos");
