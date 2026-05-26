@@ -58,14 +58,20 @@ public class CategoriaService {
         }
     }
 
-    public void delete(Integer id){
-        log.info("Borrando categoria con ID: {}", id);
+    public void delete(Integer id) {
+        log.info("Eliminando categoria con ID: {}", id);
         try {
             categoriaRepository.deleteById(id);
         } catch (Exception e) {
+            String mensaje = e.getMessage() != null ? e.getMessage() : "";
+            String causa = e.getCause() != null ? e.getCause().getMessage() : "";
+            if (mensaje.contains("foreign key") || causa.contains("foreign key") || 
+                mensaje.contains("constraint") || causa.contains("constraint")) {
+                log.warn("No se puede eliminar categoria ID: {} tiene productos asociados", id);
+                throw new BadRequestException("No se puede eliminar una categoría que tiene productos asociados");
+            }
             log.error("Error al eliminar categoria con ID: {}", id);
             throw new RuntimeException("Error al eliminar la categoria");
-
         }
     }
 
