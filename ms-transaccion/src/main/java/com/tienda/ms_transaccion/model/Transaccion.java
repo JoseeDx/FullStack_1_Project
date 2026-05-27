@@ -37,6 +37,8 @@ public class Transaccion {
 
     @Column(nullable = false) //fecha y hora exacta del pago, obligatorio
     private LocalDateTime fecha_transaccion;
+
+    //el model se encarga solo de mapear como deberia ser la tabla en la base de datos, nada mas
 }
     
 
