@@ -22,8 +22,8 @@ private Integer id_transaccion;
     @NotNull(message = "El id del pedido no puede ser nulo")
     private Integer id_pedido;
 
-    @NotNull(message = "El id del usuario no puede ser nulo")
-    private Integer id_usuario;
+    @NotNull(message = "El id del cliente no puede ser nulo")
+    private Integer id_cliente;
 
     @NotBlank(message = "El método de pago no puede estar vacío")
     private String metodo_pago;
@@ -39,12 +39,12 @@ private Integer id_transaccion;
     private LocalDateTime fecha_transaccion;
 
     public Transaccion toModel() {
-        return new Transaccion(id_transaccion, id_pedido, id_usuario, metodo_pago, monto_pago, estado_pago, fecha_transaccion);
+        return new Transaccion(id_transaccion, id_pedido, id_cliente, metodo_pago, monto_pago, estado_pago, fecha_transaccion);
     }
 
     public static TransaccionDTO fromModel(Transaccion t) {
         if (t == null) return null;
-        return new TransaccionDTO(t.getId_transaccion(), t.getId_pedido(), t.getId_usuario(), t.getMetodo_pago(), t.getMonto_pago(), t.getEstado_pago(), t.getFecha_transaccion());
+        return new TransaccionDTO(t.getId_transaccion(), t.getId_pedido(), t.getId_cliente(), t.getMetodo_pago(), t.getMonto_pago(), t.getEstado_pago(), t.getFecha_transaccion());
     }
     
 }

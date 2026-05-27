@@ -54,7 +54,7 @@ public class TransaccionController {
         log.info("PUT /transacciones/{} - Actualizando transaccion", id);
         Transaccion existing = transaccionService.findById(id);
         existing.setId_pedido(dto.getId_pedido());
-        existing.setId_usuario(dto.getId_usuario());
+        existing.setId_cliente(dto.getId_cliente());
         existing.setMetodo_pago(dto.getMetodo_pago());
         existing.setMonto_pago(dto.getMonto_pago());
         existing.setEstado_pago(dto.getEstado_pago());
