@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "clientes")
+@Table(name = "cliente") // <-- CORREGIDO A SINGULAR
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,7 +26,7 @@ public class Cliente {
     @Column(nullable = false, length =  100)
     private String nombre;
 
-    @Column(nullable = false,unique = true, length = 100)
+    @Column(nullable = false, unique = true, length = 100)
     private String correo;
 
     @ManyToOne

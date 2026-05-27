@@ -1,6 +1,7 @@
 package com.example.cliente_service.dto;
 
 import com.example.cliente_service.model.Cliente;
+import com.example.cliente_service.model.Roles;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,7 +29,12 @@ public class ClienteDTO {
     private Long idRol;
 
     public Cliente toModel() {
-        return new Cliente(id, nombre, correo, null);
+        Roles rol = null;
+        if (this.idRol != null) {
+            rol = new Roles();
+            rol.setIdRol(this.idRol);
+        }
+        return new Cliente(id, nombre, correo, rol); // <-- CORREGIDO PARA QUE ASIGNE EL ROL
     }
 
     public static ClienteDTO fromModel(Cliente c) {

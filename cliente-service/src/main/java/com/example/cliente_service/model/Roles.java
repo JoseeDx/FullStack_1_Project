@@ -15,13 +15,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class Roles {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id_rol") // <-- CORREGIDO: DEBE SER id_rol COMO EN TU SQL
     private Long idRol;
 
     @Column(name = "nombre_rol", nullable = false, length = 50)
