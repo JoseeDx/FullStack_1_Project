@@ -13,4 +13,5 @@ public class PedidoResponse {
     private Long idPedido;
     private LocalDateTime fechaPedido;
 
+    //este es el objeto que recibe la respuesta de ms-pedido (como queremos que llegue el json)
 }
