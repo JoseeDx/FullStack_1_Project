@@ -36,13 +36,18 @@ public class CarritoItemDTO {
     @NotNull(message = "La fecha no puede ser nula")
     private LocalDateTime fecha_agregado;
 
+    //convierte dto a entidad para poder guardarlo en la base de datos
     public CarritoItem toModel() {
         return new CarritoItem(id_carrito, id_cliente, id_producto, precio_unitario, fecha_agregado, cantidad);
+        //contruye el carrito usando los campos del propio dto
     }
 
+    //convierte una entidad a dto para devolverlo al cliente 
+    //static no necesita un dto precio, recibe un carrito y lo crea a dto desde cero
     public static CarritoItemDTO fromModel(CarritoItem c) {
-        if (c == null) return null;
+        if (c == null) return null; //si llega null devuelve null en ves de lanzar error pa que no explote
         return new CarritoItemDTO(c.getId_carrito(), c.getId_cliente(), c.getId_producto(), c.getCantidad(), c.getPrecio_unitario(), c.getFecha_agregado());
+        //construye dto nuevo usando los datos de la entidad recibida
     }
 
 }

@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
     }
 
     // 500 - Error interno inesperado
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(Exception.class)//clase padre de todas las expeciones
     public ResponseEntity<Map<String, String>> handleGeneric(Exception e) { //atrapa cualqueir excepcion que no agarraron las otras xd
         log.error("Error inesperado: {}", e.getMessage());
         Map<String, String> error = new HashMap<>();

@@ -14,4 +14,5 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer>{
 
     @Query("SELECT p FROM Producto p WHERE p.categoria.id_categoria = :idCategoria AND p.activo = true")
     List<Producto> findByCategoriaAndActivoTrue(@Param("idCategoria") Integer idCategoria);
+    //para filtrar por categoria y estado activo
 }

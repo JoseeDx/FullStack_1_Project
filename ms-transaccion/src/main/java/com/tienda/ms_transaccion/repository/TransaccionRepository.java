@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;//indica que es un componente d
 
 @Repository
 public interface TransaccionRepository extends JpaRepository<Transaccion, Integer> { //hereda los meodos de JpaRepository (save,findbyid,findall,deletebyid,existsbyid,count)
-// transaccion, entidad con la que trabaja - integer, el tido del id (depende de lo que pongas en el model)
+// transaccion, entidad con la que trabaja - integer, el tipo del id (depende de lo que pongas en el model)
 }
 
 //es una interfaz, spring genera la implementacion automaticamente, no hay que escribir nada

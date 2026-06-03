@@ -9,5 +9,7 @@ public interface PedidoClient { //interface pq feign la implementa automaticamen
 
     @GetMapping("/api/v1/pedidos/{id}")
     PedidoResponse findById(@PathVariable Long id); //le indica que dato queremos 
+    //no tiene cuerpo pq feign decide como hacerlo, solo se declaran los metodos
+    //@PathVariable: indica que el id debe insertarse dentro de la url
 
 }

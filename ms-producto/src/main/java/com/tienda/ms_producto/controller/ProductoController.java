@@ -23,75 +23,89 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@RestController
+@RestController//controlador rest todas las respuestas se convierten a json
 @RequestMapping("/api/v1/productos")
 public class ProductoController {
 
+    //Para registrar eventos
     private static Logger log = LoggerFactory.getLogger(ProductoController.class);
 
-    @Autowired
+    @Autowired//Inyecta productoservice
     private ProductoService productoService;
 
-    @GetMapping
+    @GetMapping//Trae todos los productos de la base de datos
     public ResponseEntity<List<ProductoDTO>> findAll(){
         log.info("Obteniendo todos los productos.");
-        List<ProductoDTO> productos = productoService.findAll()
-                .stream()
-                .map(ProductoDTO::fromModel)
-                .toList();
-        if (productos.isEmpty()){
-            return ResponseEntity.noContent().build();
+        List<ProductoDTO> productos = productoService.findAll() //Le pide a service que lo haga
+                .stream()//convierte la lista en flujo
+                .map(ProductoDTO::fromModel)//cada entidad a dto
+                .toList();//resultado a lista
+        if (productos.isEmpty()){//si esta vacio
+            return ResponseEntity.noContent().build();//retorna 204
         }
-        return ResponseEntity.ok(productos);
+        return ResponseEntity.ok(productos);//Si hay productos retorna la lista 200
     }
 
+    //Busca un producto por su id
     @GetMapping("/{id}")
-    public ResponseEntity<ProductoDTO> findById(@PathVariable Integer id) {
+    public ResponseEntity<ProductoDTO> findById(@PathVariable Integer id) {//Saca el id de la url
         log.info("Obteniendo producto con ID: {}",id);
-        Producto producto = productoService.findById(id);
-        return ResponseEntity.ok(ProductoDTO.fromModel(producto));
+        Producto producto = productoService.findById(id);//le pide al service que busque
+        return ResponseEntity.ok(ProductoDTO.fromModel(producto));//ResponseEntity.ok metodo estatico para construir una respuesta http exitosa
+        //Convierte en dto y devuelve 200
     }
 
+    //Crea un nuevo producto
     @PostMapping
-    public ResponseEntity<ProductoDTO> save(@Valid @RequestBody ProductoDTO dto) {
+    public ResponseEntity<ProductoDTO> save(@Valid @RequestBody ProductoDTO dto) {//json recibido a dto y activa las validaciones dto
         log.info("Creando nuevo producto: {}", dto.getNombre_producto());
-        Producto saved = productoService.save(dto.toModel());
+        Producto saved = productoService.save(dto.toModel());//dto a entidad para guardarlo
         return new ResponseEntity<>(ProductoDTO.fromModel(saved), HttpStatus.CREATED);
+        //convierte la entidad guardada a dto y retorna 201
     }
 
+    //Actualiza los campos de un producto 
     @PutMapping("/{id}")
     public ResponseEntity<ProductoDTO> update(@PathVariable Integer id, @Valid @RequestBody ProductoDTO dto) {
         log.info("Actualizando producto con ID: {}", id);
-        Producto existing = productoService.findById(id);
+        Producto existing = productoService.findById(id);//verifica si existe por la id
+        //Actualiza los campos con los datos nuevos 
         existing.setNombre_producto(dto.getNombre_producto());
         existing.setDescripcion_producto(dto.getDescripcion_producto());
         existing.setPrecio_producto(dto.getPrecio_producto());
+        //crea un objeto categoria con solo el id, solo necesita eso
         Categoria cat = new Categoria();
         cat.setId_categoria(dto.getId_categoria());
         existing.setCategoria(cat);
         return ResponseEntity.ok(ProductoDTO.fromModel(productoService.save(existing)));
+        //guarda los cambios y retorna el producto actualizado como dto 200
     }
 
+    //Elimina producto por su id
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {//void pq no retorna nada
         log.info("Eliminando producto con ID: {}", id);
-        productoService.delete(id);
-        return ResponseEntity.noContent().build();
+        productoService.delete(id);//le pide al service que lo borre 
+        return ResponseEntity.noContent().build();//retorna 204, eliminado sin contenido
     }
 
+    //Activar producto por su id
     @PatchMapping("/{id}/activar")
     public ResponseEntity<ProductoDTO> activar(@PathVariable Integer id) {
         log.info("Activando producto con ID: {}", id);
-        Producto existing = productoService.findById(id);
-        existing.setActivo(true);
+        Producto existing = productoService.findById(id);//verifica si el producto existe
+        existing.setActivo(true);//cambia solo el campo activo a true
         return ResponseEntity.ok(ProductoDTO.fromModel(productoService.save(existing)));
+        //guarda el cambio y retorna el producto actualizado 200
     }
 
+    //Desactivar producto por su id
     @PatchMapping("/{id}/desactivar")
     public ResponseEntity<ProductoDTO> desactivar(@PathVariable Integer id) {
         log.info("Desactivando producto con ID: {}", id);
-        Producto existing = productoService.findById(id);
-        existing.setActivo(false);
+        Producto existing = productoService.findById(id);//verifica si existe
+        existing.setActivo(false);//cambia solo el campo activo a false
         return ResponseEntity.ok(ProductoDTO.fromModel(productoService.save(existing)));
+        //guarda el cambio y retorna el producto actualizado 200
     }
 }
