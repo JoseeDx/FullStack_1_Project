@@ -12,7 +12,7 @@ CREATE TABLE transaccion (
 );
 
 --changeset equipo:2
-INSERT INTO transaccion (id_pedido, id_usuario, metodo_pago, monto_pago, estado_pago, fecha_transaccion) VALUES
+INSERT INTO transaccion (id_pedido, id_cliente, metodo_pago, monto_pago, estado_pago, fecha_transaccion) VALUES
 (1, 1, 'Tarjeta de crédito', 59990, 'COMPLETADO', '2025-01-10 10:30:00'),
 (2, 2, 'Transferencia bancaria', 139980, 'COMPLETADO', '2025-01-11 14:15:00'),
 (3, 1, 'Tarjeta de débito', 49990, 'PENDIENTE', '2025-01-12 09:00:00');
