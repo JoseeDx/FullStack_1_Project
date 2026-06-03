@@ -4,7 +4,7 @@
 CREATE TABLE transaccion (
     id_transaccion INT AUTO_INCREMENT PRIMARY KEY,
     id_pedido INT NOT NULL,
-    id_usuario INT NOT NULL,
+    id_cliente INT NOT NULL,
     metodo_pago VARCHAR(100) NOT NULL,
     monto_pago DOUBLE NOT NULL,
     estado_pago VARCHAR(50) NOT NULL,
