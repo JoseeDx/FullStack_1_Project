@@ -1,4 +1,4 @@
-public class Descuento {
+
 package com.example.ms_descuento.model; // Ajusta el paquete si el tuyo se llama diferente
 
 import jakarta.persistence.*;
@@ -32,4 +32,4 @@ public class Descuento {
     @Column(nullable = false)
     private Boolean activo;
 }
-}
+

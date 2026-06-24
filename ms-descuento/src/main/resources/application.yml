@@ -1,4 +1,4 @@
-spring.application.name=ms-descuento
+
 server:
   port: 8086
 
@@ -15,3 +15,5 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+spring.liquibase.change-log: classpath:db/changelog/db.changelog.sql
