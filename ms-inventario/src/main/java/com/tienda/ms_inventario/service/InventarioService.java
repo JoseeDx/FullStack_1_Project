@@ -1,7 +1,7 @@
 package com.tienda.ms_inventario.service;
 
 import com.tienda.ms_inventario.client.ProductoClient;
-import com.tienda.ms_inventario.dto.ProductoDTO;
+import com.tienda.ms_inventario.client.ProductoResponse;
 import com.tienda.ms_inventario.exception.BadRequestException;
 import com.tienda.ms_inventario.exception.ResourceNotFoundException;
 import com.tienda.ms_inventario.model.Inventario;
@@ -74,7 +74,7 @@ public class InventarioService {
             throw new BadRequestException("El stock máximo debe ser mayor al stock mínimo");
 
         try {
-            ProductoDTO producto = productoClient.obtenerProducto(inventario.getId_producto());
+            ProductoResponse producto = productoClient.obtenerProducto(inventario.getId_producto());
             log.info("Producto validado: {}", producto.getNombre_producto());
 
             inventario.setFecha_actualizacion(LocalDateTime.now());

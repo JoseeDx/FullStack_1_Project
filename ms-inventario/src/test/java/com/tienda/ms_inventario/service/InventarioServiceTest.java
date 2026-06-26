@@ -1,7 +1,7 @@
 package com.tienda.ms_inventario.service;
 
 import com.tienda.ms_inventario.client.ProductoClient;
-import com.tienda.ms_inventario.dto.ProductoDTO;
+import com.tienda.ms_inventario.client.ProductoResponse;
 import com.tienda.ms_inventario.exception.BadRequestException;
 import com.tienda.ms_inventario.exception.ResourceNotFoundException;
 import com.tienda.ms_inventario.model.Inventario;
@@ -29,7 +29,7 @@ class InventarioServiceTest {
     private InventarioService inventarioService;
 
     private Inventario inventario;
-    private ProductoDTO productoDTO;
+    private ProductoResponse productoDTO;
 
     @BeforeEach
     void setUp() {
@@ -40,7 +40,7 @@ class InventarioServiceTest {
         inventario.setStock_minimo(10);
         inventario.setStock_maximo(100);
 
-        productoDTO = new ProductoDTO();
+        productoDTO = new ProductoResponse();
         productoDTO.setId_producto(1);
         productoDTO.setNombre_producto("Teclado Mecánico");
         productoDTO.setActivo(true);
