@@ -10,31 +10,41 @@ spring:
         webflux:
           routes:
           - id: cliente-service
-            uri: http://localhost:9091
+            uri: http://cliente-service:9091
             predicates:
             - Path=/api/v1/clientes/**
 
           - id: ms-carrito
-            uri: http://localhost:8084
+            uri: http://ms-carrito:8084
             predicates:
             - Path=/api/v1/carrito/**
 
           - id: ms-pedido
-            uri: http://localhost:9094
+            uri: http://ms-pedido:9094
             predicates:
             - Path=/api/v1/pedidos/**
 
           - id: ms-producto
-            uri: http://localhost:8081
+            uri: http://ms-producto:8081
             predicates:
             - Path=/api/v1/productos/**
 
           - id: ms-producto-categorias
-            uri: http://localhost:8081
+            uri: http://ms-producto:8081
             predicates:
             - Path=/api/v1/categorias/**
 
           - id: ms-transaccion
-            uri: http://localhost:8085
+            uri: http://ms-transaccion:8085
             predicates:
             - Path=/api/v1/transacciones/**
+          
+          - id: ms-inventario
+            uri: http://ms-inventario:8083
+            predicates:
+            - Path=/api/v1/inventario/**
+
+          - id: ms-facturacion
+            uri: http://ms-facturacion:8086
+            predicates:
+            - Path=/api/v1/facturas/**

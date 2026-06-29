@@ -1,0 +1,40 @@
+services:
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "9090:9090"
+    eviroment:
+      <<: *common-env
+    depends_on:
+      - ms-inventario
+      - ms-facturacion
+      - ms-producto
+      - ms-transaccion
+      - ms-carrito 
+    
+  ms-inventario:
+    build: ./ms-inventario
+    ports:
+      - "8083:8083"
+  
+  ms-facturacion:
+    build: ./ms-facturacion
+    ports: 
+      - "8086:8086"
+  
+  ms-producto:
+    build: ./ms-producto
+    ports:
+      - "8081:8081"
+  
+  ms-transaccion:
+    build: ./ms-transaccion
+    ports:
+      - "8085:8085"
+  
+  ms-carrito:
+    build: ./ms-carrito
+    ports:
+      - "8084:8084"
+
