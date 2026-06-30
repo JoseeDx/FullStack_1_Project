@@ -1,0 +1,19 @@
+
+server:
+  port: 8086
+
+spring:
+  application:
+    name: ms-descuento
+  datasource:
+    # createDatabaseIfNotExist=true crea la BD automáticamente en Laragon si no existe
+    url: jdbc:mysql://localhost:3306/db_descuento?createDatabaseIfNotExist=true
+    username: root
+    password: 
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+spring.liquibase.change-log: classpath:db/changelog/db.changelog.sql
