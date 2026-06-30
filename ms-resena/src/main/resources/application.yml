@@ -1,0 +1,26 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: ms-resena
+  
+  # Conexión a tu Base de Datos local en Laragon
+  datasource:
+    url: jdbc:mysql://localhost:3306/resena_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: 
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # Regla de Oro: ddl-auto en validate para que Liquibase gobierne la BD
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Ubicación del archivo maestro de migraciones
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog.sql
