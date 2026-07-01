@@ -1,0 +1,23 @@
+server:
+  port: 9091
+
+spring:
+  application:
+    name: cliente-service
+    
+  datasource:
+    # Cambiado a host.docker.internal para conectar con tu Laragon
+    url: jdbc:mysql://host.docker.internal:3306/bd_cliente?createDatabaseIfNotExist=true
+    username: root
+    password: 
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog.sql

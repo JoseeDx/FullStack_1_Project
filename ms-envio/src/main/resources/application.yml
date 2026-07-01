@@ -5,7 +5,8 @@ spring:
   application:
     name: ms-envio
   datasource:
-    url: jdbc:mysql://localhost:3306/db_envio?createDatabaseIfNotExist=true
+    # Aquí aplicamos el cambio a host.docker.internal
+    url: jdbc:mysql://host.docker.internal:3306/db_envio?createDatabaseIfNotExist=true
     username: root
     password: 
     driver-class-name: com.mysql.cj.jdbc.Driver

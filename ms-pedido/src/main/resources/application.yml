@@ -1,20 +1,19 @@
 server:
-  port: 8082
+  port: 9094
 
 spring:
   application:
-    name: ms-descuento
+    name: ms-pedido
     
   datasource:
     # Cambiado a host.docker.internal
-    url: jdbc:mysql://host.docker.internal:3306/db_descuento?createDatabaseIfNotExist=true
+    url: jdbc:mysql://host.docker.internal:3306/db_pedido?createDatabaseIfNotExist=true
     username: root
     password: 
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
 
   liquibase:

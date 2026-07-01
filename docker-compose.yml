@@ -1,3 +1,10 @@
+version: '3.8'
+
+# Aquí definimos las variables de entorno comunes para no repetir código (el ancla que te faltaba)
+x-common-env: &common-env
+  SPRING_PROFILES_ACTIVE: docker
+  # Puedes agregar aquí credenciales de BD comunes, configuraciones de Eureka, etc.
+
 services:
 
   api-gateway:
@@ -7,34 +14,64 @@ services:
     environment:
       <<: *common-env
     depends_on:
-      - ms-inventario
-      - ms-facturacion
+      - cliente-service
       - ms-producto
+      - ms-carrito
+      - ms-inventario
+      - ms-pedido
       - ms-transaccion
-      - ms-carrito 
+      - ms-facturacion
+      - ms-envio
+      - ms-descuento
+      - ms-resena
     
-  ms-inventario:
-    build: ./ms-inventario
+  cliente-service:
+    build: ./cliente-service
     ports:
-      - "8083:8083"
-  
-  ms-facturacion:
-    build: ./ms-facturacion
-    ports: 
-      - "8086:8086"
-  
+      - "9091:9091"
+
   ms-producto:
     build: ./ms-producto
     ports:
       - "8081:8081"
-  
+
+  ms-carrito:
+    build: ./ms-carrito
+    ports:
+      - "8084:8084" # Tal como acordamos, tomamos el 8084 como fuente de verdad
+
+  ms-inventario:
+    build: ./ms-inventario
+    ports:
+      - "8083:8083"
+
+  ms-pedido:
+    build: ./ms-pedido
+    ports:
+      - "9094:9094"
+
   ms-transaccion:
     build: ./ms-transaccion
     ports:
       - "8085:8085"
   
-  ms-carrito:
-    build: ./ms-carrito
-    ports:
-      - "8084:8084"
+  ms-facturacion:
+    build: ./ms-facturacion
+    ports: 
+      - "8086:8086"
 
+  ms-resena:
+    build: ./ms-resena
+    ports:
+      - "8087:8087"
+
+  # Para envío y descuento asignaremos puertos correlativos libres si no los tenías fijos
+  ms-envio:
+    build: ./ms-envio
+    ports:
+      - "8088:8088" 
+
+  ms-descuento:
+    build: ./ms-descuento
+    ports:
+      - "8089:8089"
