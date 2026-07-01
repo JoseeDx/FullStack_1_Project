@@ -35,9 +35,24 @@ spring:
         - id: ms-inventario
           uri: http://ms-inventario:8083
           predicates:
-            - Path=/api/v1/inventario/**
+            - Path=/api/v1/inventario/**, /inventario/v2/**
 
         - id: ms-facturacion
           uri: http://ms-facturacion:8086
           predicates:
-            - Path=/api/v1/facturas/**
+            - Path=/api/v1/facturas/**, /facturas/v2/**
+
+        - id: ms-resena
+          uri: http://ms-resena:8087
+          predicates:
+            - Path=/api/v1/resenas/**
+
+        - id: ms-descuento
+          uri: http://ms-descuento:8082
+          predicates:
+            - Path=/api/v1/descuentos/**
+
+        - id: ms-envio
+          uri: http://ms-envio:8088
+          predicates:
+            - Path=/api/v1/envios/**
