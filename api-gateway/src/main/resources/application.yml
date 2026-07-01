@@ -42,9 +42,10 @@ spring:
           - id: ms-inventario
             uri: http://ms-inventario:8083
             predicates:
-            - Path=/api/v1/inventario/**
+            - Path=/api/v1/inventario/**,/inventario/v2/**
 
           - id: ms-facturacion
             uri: http://ms-facturacion:8086
             predicates:
-            - Path=/api/v1/facturas/**
+            - Path=/api/v1/facturas/**,/facturas/v2/** 
+          
