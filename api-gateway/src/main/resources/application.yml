@@ -6,46 +6,38 @@ spring:
     web-application-type: reactive
   cloud:
     gateway:
-      server:
-        webflux:
-          routes:
-          - id: cliente-service
-            uri: http://cliente-service:9091
-            predicates:
+      routes:
+        - id: cliente-service
+          uri: http://cliente-service:9091
+          predicates:
             - Path=/api/v1/clientes/**
-
-          - id: ms-carrito
-            uri: http://ms-carrito:8084
-            predicates:
+            
+        - id: ms-producto
+          uri: http://ms-producto:8081
+          predicates:
+            - Path=/api/v1/productos/**, /api/v1/categorias/**
+            
+        - id: ms-carrito
+          uri: http://ms-carrito:8084
+          predicates:
             - Path=/api/v1/carrito/**
-
-          - id: ms-pedido
-            uri: http://ms-pedido:9094
-            predicates:
+            
+        - id: ms-pedido
+          uri: http://ms-pedido:9094
+          predicates:
             - Path=/api/v1/pedidos/**
-
-          - id: ms-producto
-            uri: http://ms-producto:8081
-            predicates:
-            - Path=/api/v1/productos/**
-
-          - id: ms-producto-categorias
-            uri: http://ms-producto:8081
-            predicates:
-            - Path=/api/v1/categorias/**
-
-          - id: ms-transaccion
-            uri: http://ms-transaccion:8085
-            predicates:
+            
+        - id: ms-transaccion
+          uri: http://ms-transaccion:8085
+          predicates:
             - Path=/api/v1/transacciones/**
           
-          - id: ms-inventario
-            uri: http://ms-inventario:8083
-            predicates:
-            - Path=/api/v1/inventario/**,/inventario/v2/**
+        - id: ms-inventario
+          uri: http://ms-inventario:8083
+          predicates:
+            - Path=/api/v1/inventario/**
 
-          - id: ms-facturacion
-            uri: http://ms-facturacion:8086
-            predicates:
-            - Path=/api/v1/facturas/**,/facturas/v2/** 
-          
+        - id: ms-facturacion
+          uri: http://ms-facturacion:8086
+          predicates:
+            - Path=/api/v1/facturas/**
