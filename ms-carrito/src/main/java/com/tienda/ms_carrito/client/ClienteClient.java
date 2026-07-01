@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 //Cliente http que apunta a cliente-service indicando su nombre y url donde esta corriendo
 //Interface pq feign implementa todo automaticamente
-@FeignClient(name = "cliente-service", url = "http://localhost:9091")
+@FeignClient(name = "cliente-service", url = "http://cliente-service:9091")
 public interface ClienteClient {
 
     //Se declara metodo get para obtener los campos que necesitamos

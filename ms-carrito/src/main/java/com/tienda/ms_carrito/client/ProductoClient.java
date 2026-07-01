@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 //Cliente HTTP que apunta a ms-producto, indica nombre de microservicio y url donde esta corriendo
 //Interface pq feign implementa todo automaticamente
-@FeignClient(name = "ms-producto", url = "http://localhost:8081")
+@FeignClient(name = "ms-producto", url = "http://ms-producto:8081")
 public interface ProductoClient {
 
     //Se declara el metodo get 
