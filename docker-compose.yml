@@ -4,7 +4,7 @@ services:
     build: ./api-gateway
     ports:
       - "9090:9090"
-    eviroment:
+    environment:
       <<: *common-env
     depends_on:
       - ms-inventario

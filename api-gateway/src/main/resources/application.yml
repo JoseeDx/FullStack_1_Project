@@ -31,28 +31,13 @@ spring:
           uri: http://ms-transaccion:8085
           predicates:
             - Path=/api/v1/transacciones/**
-            
-        - id: ms-envio
-          uri: http://ms-envio:8086  # Asegura el puerto que definiste
-          predicates:
-            - Path=/api/v1/envios/**
-            
-        - id: ms-descuento
-          uri: http://ms-descuento:8088 # Asegura el puerto que definiste
-          predicates:
-            - Path=/api/v1/descuentos/**
-            
-        - id: ms-resena
-          uri: http://ms-resena:8087
-          predicates:
-            - Path=/api/v1/resenas/**
-            
+          
         - id: ms-inventario
-          uri: http://ms-inventario:8089 # Asegura el puerto que definiste
+          uri: http://ms-inventario:8083
           predicates:
             - Path=/api/v1/inventario/**
-            
+
         - id: ms-facturacion
-          uri: http://ms-facturacion:8092 # Asegura el puerto que definiste
+          uri: http://ms-facturacion:8086
           predicates:
             - Path=/api/v1/facturas/**
