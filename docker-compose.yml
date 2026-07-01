@@ -74,4 +74,4 @@ services:
   ms-descuento:
     build: ./ms-descuento
     ports:
-      - "8089:8089"
+      - "8082:8082"
