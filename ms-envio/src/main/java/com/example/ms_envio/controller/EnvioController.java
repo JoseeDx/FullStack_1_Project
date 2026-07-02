@@ -1,12 +1,12 @@
 package com.example.ms_envio.controller;
 
+import com.example.ms_envio.assemblers.EnvioModelAssembler;
 import com.example.ms_envio.dto.EnvioDTO;
 import com.example.ms_envio.service.EnvioService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +22,9 @@ public class EnvioController {
     @Autowired
     private EnvioService service;
 
+    @Autowired
+    private EnvioModelAssembler assembler;
+
     @PostMapping
     public ResponseEntity<EnvioDTO> crear(@Valid @RequestBody EnvioDTO dto) {
         log.info("Petición REST recibida: Crear envío");
@@ -32,20 +35,15 @@ public class EnvioController {
     public ResponseEntity<EntityModel<EnvioDTO>> obtenerPorId(@PathVariable Integer id) {
         log.info("Petición REST recibida: Obtener envío por ID");
         EnvioDTO dto = service.obtenerPorId(id);
-        EntityModel<EnvioDTO> recurso = EntityModel.of(dto);
-        recurso.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).obtenerPorId(id)).withSelfRel());
-        return ResponseEntity.ok(recurso);
+        return ResponseEntity.ok(assembler.toModel(dto));
     }
 
     @GetMapping
     public ResponseEntity<List<EntityModel<EnvioDTO>>> obtenerTodos() {
         log.info("Petición REST recibida: Obtener todos los envíos");
         List<EntityModel<EnvioDTO>> recursos = service.obtenerTodos().stream()
-                .map(dto -> {
-                    EntityModel<EnvioDTO> recurso = EntityModel.of(dto);
-                    recurso.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).obtenerPorId(dto.getIdEnvio())).withSelfRel());
-                    return recurso;
-                }).collect(Collectors.toList());
+                .map(assembler::toModel)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(recursos);
     }
 

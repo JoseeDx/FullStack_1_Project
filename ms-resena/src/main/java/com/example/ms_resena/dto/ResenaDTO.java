@@ -1,12 +1,17 @@
 package com.example.ms_resena.dto;
 
 import com.example.ms_resena.model.Resena;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ResenaDTO {
     private Long idResena;

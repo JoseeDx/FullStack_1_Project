@@ -30,10 +30,23 @@ public class ResenaService {
 
     public List<ResenaDTO> obtenerResenasPorProducto(Long idProducto) {
         List<Resena> resenas = resenaRepository.findByIdProducto(idProducto);
-        
+
         return resenas.stream()
                 .map(ResenaDTO::fromModel)
                 .collect(Collectors.toList());
+    }
+
+    public List<ResenaDTO> listar() {
+        return resenaRepository.findAll().stream()
+                .map(ResenaDTO::fromModel)
+                .collect(Collectors.toList());
+    }
+
+    public ResenaDTO obtenerPorId(Long id) {
+        Resena resena = resenaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la reseña con ID: " + id));
+
+        return ResenaDTO.fromModel(resena);
     }
 
     public void eliminarResena(Long id) {

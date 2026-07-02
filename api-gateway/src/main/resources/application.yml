@@ -6,53 +6,55 @@ spring:
     web-application-type: reactive
   cloud:
     gateway:
-      routes:
-        - id: cliente-service
-          uri: http://cliente-service:9091
-          predicates:
-            - Path=/api/v1/clientes/**
-            
-        - id: ms-producto
-          uri: http://ms-producto:8081
-          predicates:
-            - Path=/api/v1/productos/**, /api/v1/categorias/**
-            
-        - id: ms-carrito
-          uri: http://ms-carrito:8084
-          predicates:
-            - Path=/api/v1/carrito/**
-            
-        - id: ms-pedido
-          uri: http://ms-pedido:9094
-          predicates:
-            - Path=/api/v1/pedidos/**
-            
-        - id: ms-transaccion
-          uri: http://ms-transaccion:8085
-          predicates:
-            - Path=/api/v1/transacciones/**
-          
-        - id: ms-inventario
-          uri: http://ms-inventario:8083
-          predicates:
-            - Path=/api/v1/inventario/**, /inventario/v2/**
+      server:
+        webflux:
+          routes:
+            - id: cliente-service
+              uri: http://cliente-service:9091
+              predicates:
+                - Path=/api/v1/clientes/**
+                
+            - id: ms-producto
+              uri: http://ms-producto:8081
+              predicates:
+                - Path=/api/v1/productos/**, /api/v1/categorias/**
+                
+            - id: ms-carrito
+              uri: http://ms-carrito:8084
+              predicates:
+                - Path=/api/v1/carrito/**
+                
+            - id: ms-pedido
+              uri: http://ms-pedido:9094
+              predicates:
+                - Path=/api/v1/pedidos/**
+                
+            - id: ms-transaccion
+              uri: http://ms-transaccion:8085
+              predicates:
+                - Path=/api/v1/transacciones/**
+              
+            - id: ms-inventario
+              uri: http://ms-inventario:8083
+              predicates:
+                - Path=/api/v1/inventario/**, /inventario/v2/**
 
-        - id: ms-facturacion
-          uri: http://ms-facturacion:8086
-          predicates:
-            - Path=/api/v1/facturas/**, /facturas/v2/**
+            - id: ms-facturacion
+              uri: http://ms-facturacion:8086
+              predicates:
+                - Path=/api/v1/facturas/**, /facturas/v2/**
 
-        - id: ms-resena
-          uri: http://ms-resena:8087
-          predicates:
-            - Path=/api/v1/resenas/**
+            - id: ms-resena
+              uri: http://ms-resena:8087
+              predicates:
+                - Path=/api/v1/resenas/**, /resenas/v2/**
 
-        - id: ms-descuento
-          uri: http://ms-descuento:8082
-          predicates:
-            - Path=/api/v1/descuentos/**
+            - id: ms-descuento
+              uri: http://ms-descuento:8082
+              predicates:
+                - Path=/api/v1/descuentos/**
 
-        - id: ms-envio
-          uri: http://ms-envio:8088
-          predicates:
-            - Path=/api/v1/envios/**
+            - id: ms-envio
+              uri: http://ms-envio:8088
+              predicates:
+                - Path=/api/v1/envios/**

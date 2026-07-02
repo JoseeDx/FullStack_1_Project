@@ -1,12 +1,12 @@
 package com.example.ms_descuento.controller;
 
+import com.example.ms_descuento.assemblers.DescuentoModelAssembler;
 import com.example.ms_descuento.dto.DescuentoDTO;
 import com.example.ms_descuento.service.DescuentoService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +23,9 @@ public class DescuentoController {
     @Autowired
     private DescuentoService service;
 
+    @Autowired
+    private DescuentoModelAssembler assembler;
+
     @PostMapping
     public ResponseEntity<DescuentoDTO> crear(@Valid @RequestBody DescuentoDTO dto) {
         log.info("Petición REST para crear descuento recibida");
@@ -34,9 +37,7 @@ public class DescuentoController {
     public ResponseEntity<EntityModel<DescuentoDTO>> obtenerPorId(@PathVariable Integer id) {
         log.info("Petición REST para obtener descuento por ID recibida");
         DescuentoDTO dto = service.obtenerPorId(id);
-        EntityModel<DescuentoDTO> recurso = EntityModel.of(dto);
-        recurso.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).obtenerPorId(id)).withSelfRel());
-        return ResponseEntity.ok(recurso);
+        return ResponseEntity.ok(assembler.toModel(dto));
     }
 
     // HATEOAS implementado solo en GET según rúbrica
@@ -44,11 +45,8 @@ public class DescuentoController {
     public ResponseEntity<List<EntityModel<DescuentoDTO>>> obtenerTodos() {
         log.info("Petición REST para obtener todos los descuentos recibida");
         List<EntityModel<DescuentoDTO>> recursos = service.obtenerTodos().stream()
-                .map(dto -> {
-                    EntityModel<DescuentoDTO> recurso = EntityModel.of(dto);
-                    recurso.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).obtenerPorId(dto.getIdDescuento())).withSelfRel());
-                    return recurso;
-                }).collect(Collectors.toList());
+                .map(assembler::toModel)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(recursos);
     }
 
