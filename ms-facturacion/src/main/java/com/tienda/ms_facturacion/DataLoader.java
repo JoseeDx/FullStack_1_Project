@@ -20,6 +20,10 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (facturaRepository.count() > 0) {
+            return;
+        }
+
         Faker faker = new Faker();
         String[] rutsValidos = {"11111111-1", "22222222-2", "12345678-5", "9876543-3"};
 

@@ -17,6 +17,10 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (resenaRepository.count() > 0) {
+            return;
+        }
+
         Faker faker = new Faker();
 
         for (int i = 1; i <= 10; i++) {

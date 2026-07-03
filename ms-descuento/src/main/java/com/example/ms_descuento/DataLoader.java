@@ -19,6 +19,10 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (descuentoRepository.count() > 0) {
+            return;
+        }
+
         Faker faker = new Faker();
         String[] codigosCupon = {"DESC10", "VERANO20", "BIENVENIDA15", "FLASH30", "CYBER25"};
 

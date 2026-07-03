@@ -19,6 +19,10 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (envioRepository.count() > 0) {
+            return;
+        }
+
         Faker faker = new Faker();
         String[] estados = {"PREPARANDO", "EN_RUTA", "ENTREGADO"};
 
