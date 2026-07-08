@@ -5,7 +5,6 @@ import com.tienda.ms_producto.model.Categoria;
 import com.tienda.ms_producto.service.CategoriaService;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,8 +27,11 @@ public class CategoriaController {
 
     private static Logger log = LoggerFactory.getLogger(CategoriaController.class);
 
-    @Autowired//Inyecta service
-    private CategoriaService categoriaService;
+    private final CategoriaService categoriaService;
+
+    public CategoriaController(CategoriaService categoriaService) {
+        this.categoriaService = categoriaService;
+    }
 
     @GetMapping//Lista todas las categorias
     public ResponseEntity<List<CategoriaDTO>> findAll(){
@@ -67,10 +69,8 @@ public class CategoriaController {
     @PutMapping("/{id}")
     public ResponseEntity<CategoriaDTO> update(@PathVariable Integer id, @Valid @RequestBody CategoriaDTO dto) {
         log.info("PUT /categorias/{} - Actualizando categoria", id);
-        Categoria existing = categoriaService.findById(id); //Verifica si existe por la id
-        existing.setNombre_categoria(dto.getNombre_categoria());//Actualiza el campo
-        return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.save(existing)));
-        //Guarda los cambios convierte a dto y retorna 200
+        return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.actualizar(id, dto.toModel())));
+        //el service se encarga de buscar, mezclar los campos y guardar
     }
 
     //Borrar categoria por su id
@@ -86,10 +86,7 @@ public class CategoriaController {
     @PatchMapping("/{id}/activar")
     public ResponseEntity<CategoriaDTO> activar(@PathVariable Integer id) {
         log.info("PATCH /categorias/{}/activar - Activando categoria", id);
-        Categoria existing = categoriaService.findById(id);//Verifica si la categoria existe
-        existing.setActivo(true);//Cambia el campo activo a true
-        return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.save(existing)));
-        //Guarda el cambio, cambia a dto y retorna 200
+        return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.activar(id)));
     }
 
     //Desactivar categoria 

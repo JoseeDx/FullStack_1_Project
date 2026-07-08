@@ -1,12 +1,10 @@
 package com.tienda.ms_producto.controller;
 
 import com.tienda.ms_producto.dto.ProductoDTO;
-import com.tienda.ms_producto.model.Categoria;
 import com.tienda.ms_producto.model.Producto;
 import com.tienda.ms_producto.service.ProductoService;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,8 +28,11 @@ public class ProductoController {
     //Para registrar eventos
     private static Logger log = LoggerFactory.getLogger(ProductoController.class);
 
-    @Autowired//Inyecta productoservice
-    private ProductoService productoService;
+    private final ProductoService productoService;
+
+    public ProductoController(ProductoService productoService) {
+        this.productoService = productoService;
+    }
 
     @GetMapping//Trae todos los productos de la base de datos
     public ResponseEntity<List<ProductoDTO>> findAll(){
@@ -64,21 +65,12 @@ public class ProductoController {
         //convierte la entidad guardada a dto y retorna 201
     }
 
-    //Actualiza los campos de un producto 
+    //Actualiza los campos de un producto
     @PutMapping("/{id}")
     public ResponseEntity<ProductoDTO> update(@PathVariable Integer id, @Valid @RequestBody ProductoDTO dto) {
         log.info("Actualizando producto con ID: {}", id);
-        Producto existing = productoService.findById(id);//verifica si existe por la id
-        //Actualiza los campos con los datos nuevos 
-        existing.setNombre_producto(dto.getNombre_producto());
-        existing.setDescripcion_producto(dto.getDescripcion_producto());
-        existing.setPrecio_producto(dto.getPrecio_producto());
-        //crea un objeto categoria con solo el id, solo necesita eso
-        Categoria cat = new Categoria();
-        cat.setId_categoria(dto.getId_categoria());
-        existing.setCategoria(cat);
-        return ResponseEntity.ok(ProductoDTO.fromModel(productoService.save(existing)));
-        //guarda los cambios y retorna el producto actualizado como dto 200
+        return ResponseEntity.ok(ProductoDTO.fromModel(productoService.actualizar(id, dto.toModel())));
+        //el service se encarga de buscar, mezclar los campos y guardar
     }
 
     //Elimina producto por su id
@@ -93,19 +85,13 @@ public class ProductoController {
     @PatchMapping("/{id}/activar")
     public ResponseEntity<ProductoDTO> activar(@PathVariable Integer id) {
         log.info("Activando producto con ID: {}", id);
-        Producto existing = productoService.findById(id);//verifica si el producto existe
-        existing.setActivo(true);//cambia solo el campo activo a true
-        return ResponseEntity.ok(ProductoDTO.fromModel(productoService.save(existing)));
-        //guarda el cambio y retorna el producto actualizado 200
+        return ResponseEntity.ok(ProductoDTO.fromModel(productoService.activar(id)));
     }
 
     //Desactivar producto por su id
     @PatchMapping("/{id}/desactivar")
     public ResponseEntity<ProductoDTO> desactivar(@PathVariable Integer id) {
         log.info("Desactivando producto con ID: {}", id);
-        Producto existing = productoService.findById(id);//verifica si existe
-        existing.setActivo(false);//cambia solo el campo activo a false
-        return ResponseEntity.ok(ProductoDTO.fromModel(productoService.save(existing)));
-        //guarda el cambio y retorna el producto actualizado 200
+        return ResponseEntity.ok(ProductoDTO.fromModel(productoService.desactivar(id)));
     }
 }

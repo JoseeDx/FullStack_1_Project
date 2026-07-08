@@ -3,7 +3,6 @@ package com.tienda.ms_transaccion.controller;
 import com.tienda.ms_transaccion.dto.TransaccionDTO;
 import com.tienda.ms_transaccion.model.Transaccion;
 import com.tienda.ms_transaccion.service.TransaccionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +19,11 @@ public class TransaccionController {
     // Registrar eventos importantes en cada endpoint
     private static Logger log = LoggerFactory.getLogger(TransaccionController.class);
 
-    @Autowired //inyecta automaticamente el service
-    private TransaccionService transaccionService;
+    private final TransaccionService transaccionService;
+
+    public TransaccionController(TransaccionService transaccionService) {
+        this.transaccionService = transaccionService;
+    }
 
     @GetMapping //sin parametros, se usa el "/api/v1/transacciones", retorna la lista completa
     public ResponseEntity<List<TransaccionDTO>> findAll() {
@@ -54,15 +56,8 @@ public class TransaccionController {
     @PutMapping("/{id}")
     public ResponseEntity<TransaccionDTO> update(@PathVariable Integer id, @Valid @RequestBody TransaccionDTO dto) { // recibe la id por el url y los datos nuevos por el body
         log.info("PUT /transacciones/{} - Actualizando transaccion", id);
-        Transaccion existing = transaccionService.findById(id); //busca si la transaccion existe
-        existing.setId_pedido(dto.getId_pedido()); 
-        existing.setId_cliente(dto.getId_cliente());
-        existing.setMetodo_pago(dto.getMetodo_pago());
-        existing.setMonto_pago(dto.getMonto_pago());
-        existing.setEstado_pago(dto.getEstado_pago());
-        existing.setFecha_transaccion(dto.getFecha_transaccion());
-        //se guardan los cambios campo por campo
-        return ResponseEntity.ok(TransaccionDTO.fromModel(transaccionService.save(existing))); //guarda los cambios
+        return ResponseEntity.ok(TransaccionDTO.fromModel(transaccionService.actualizar(id, dto.toModel())));
+        //el service se encarga de buscar, mezclar los campos y guardar
     }
 
     @DeleteMapping("/{id}")

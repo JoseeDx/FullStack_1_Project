@@ -57,6 +57,33 @@ public class ProductoService {
         }
     }
 
+    //Actualiza los campos de un producto existente
+    public Producto actualizar(Integer id, Producto datosActualizados){
+        log.info("Actualizando producto con ID: {}", id);
+        Producto existing = findById(id);//verifica si existe por la id
+        existing.setNombre_producto(datosActualizados.getNombre_producto());
+        existing.setDescripcion_producto(datosActualizados.getDescripcion_producto());
+        existing.setPrecio_producto(datosActualizados.getPrecio_producto());
+        existing.setCategoria(datosActualizados.getCategoria());
+        return save(existing);
+    }
+
+    //Activa un producto por su id
+    public Producto activar(Integer id){
+        log.info("Activando producto con ID: {}", id);
+        Producto existing = findById(id);
+        existing.setActivo(true);
+        return save(existing);
+    }
+
+    //Desactiva un producto por su id
+    public Producto desactivar(Integer id){
+        log.info("Desactivando producto con ID: {}", id);
+        Producto existing = findById(id);
+        existing.setActivo(false);
+        return save(existing);
+    }
+
     //Borra producto por su id
     public void delete(Integer id){
         log.info("Eliminando producto con ID: {}", id);

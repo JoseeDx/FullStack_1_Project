@@ -72,6 +72,19 @@ public class TransaccionService {
         }
     }
 
+    //actualiza los campos de una transaccion existente
+    public Transaccion actualizar(Integer id, Transaccion datosActualizados) {
+        log.info("Actualizando transaccion con ID: {}", id);
+        Transaccion existing = findById(id); //busca si la transaccion existe
+        existing.setId_pedido(datosActualizados.getId_pedido());
+        existing.setId_cliente(datosActualizados.getId_cliente());
+        existing.setMetodo_pago(datosActualizados.getMetodo_pago());
+        existing.setMonto_pago(datosActualizados.getMonto_pago());
+        existing.setEstado_pago(datosActualizados.getEstado_pago());
+        existing.setFecha_transaccion(datosActualizados.getFecha_transaccion());
+        return save(existing);
+    }
+
     //elimina una transaccion por su id
     public void delete(Integer id) {  //void pq no retorna nada
         log.info("Borrando transaccion con ID: {}",id);

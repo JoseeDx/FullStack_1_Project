@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +21,11 @@ public class CarritoItemController {
     //registrar eventos
     private static Logger log = LoggerFactory.getLogger(CarritoItemController.class);
 
-    @Autowired //inyecta el service
-    private CarritoItemService carritoItemService;
+    private final CarritoItemService carritoItemService;
+
+    public CarritoItemController(CarritoItemService carritoItemService) {
+        this.carritoItemService = carritoItemService;
+    }
 
     @GetMapping //trae todos los items del carrito
     public ResponseEntity<List<CarritoItemDTO>> findAll() {
@@ -76,14 +78,8 @@ public class CarritoItemController {
     public ResponseEntity<CarritoItemDTO> update(@PathVariable Integer id, @Valid @RequestBody CarritoItemDTO dto) {
         //recibe la id por la url y los datos nuevos por el body
         log.info("PUT /carrito/{} - Actualizando item del carrito", id);
-        CarritoItem existing = carritoItemService.findById(id);//primero busca si existe
-        existing.setId_cliente(dto.getId_cliente());
-        existing.setId_producto(dto.getId_producto());
-        existing.setCantidad(dto.getCantidad());
-        existing.setPrecio_unitario(dto.getPrecio_unitario());
-        existing.setFecha_agregado(dto.getFecha_agregado());
-        return ResponseEntity.ok(CarritoItemDTO.fromModel(carritoItemService.save(existing)));
-        //guarda los cambios y retorna carrito actualizado como dto 200
+        return ResponseEntity.ok(CarritoItemDTO.fromModel(carritoItemService.actualizar(id, dto.toModel())));
+        //el service se encarga de buscar, mezclar los campos y guardar
     }
 
     @DeleteMapping("/{id}") //borra xd

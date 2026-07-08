@@ -63,6 +63,22 @@ public class CategoriaService {
         }
     }
 
+    //Actualiza los campos de una categoria existente
+    public Categoria actualizar(Integer id, Categoria datosActualizados){
+        log.info("Actualizando categoria con ID: {}", id);
+        Categoria existing = findById(id);//verifica si existe por la id
+        existing.setNombre_categoria(datosActualizados.getNombre_categoria());
+        return save(existing);
+    }
+
+    //Activa una categoria por su id
+    public Categoria activar(Integer id){
+        log.info("Activando categoria con ID: {}", id);
+        Categoria existing = findById(id);
+        existing.setActivo(true);
+        return save(existing);
+    }
+
     //Borra una categoria por su id
     public void delete(Integer id) {
         log.info("Eliminando categoria con ID: {}", id);

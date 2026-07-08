@@ -114,6 +114,17 @@ public class CarritoItemService {
 
     }
 
+    //Actualiza los campos de un item del carrito existente
+    public CarritoItem actualizar(Integer id, CarritoItem datosActualizados) {
+        log.info("Actualizando item del carrito con ID: {}", id);
+        CarritoItem existing = findById(id);//primero busca si existe
+        existing.setId_cliente(datosActualizados.getId_cliente());
+        existing.setId_producto(datosActualizados.getId_producto());
+        existing.setCantidad(datosActualizados.getCantidad());
+        existing.setFecha_agregado(datosActualizados.getFecha_agregado());
+        return save(existing);
+    }
+
     //Elimina un item del carrito por su id
     public void delete(Integer id) {
         log.info("Eliminando item del carrito con ID: {}", id);
