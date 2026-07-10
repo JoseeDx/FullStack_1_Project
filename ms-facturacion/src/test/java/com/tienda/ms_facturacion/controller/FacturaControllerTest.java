@@ -98,4 +98,75 @@ public class FacturaControllerTest {
 
         verify(facturaService, times(1)).eliminar(1L);
     }
+
+    @Test
+    public void testListarFacturas_SinResultados_DeberiaRetornarNoContent() throws Exception {
+        when(facturaService.listar()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/facturas"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testObtenerPorIdPedido() throws Exception {
+        when(facturaService.obtenerPorIdPedido(1L)).thenReturn(List.of(factura));
+
+        mockMvc.perform(get("/api/v1/facturas/pedido/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id_pedido").value(1L));
+    }
+
+    @Test
+    public void testObtenerPorIdPedido_SinResultados_DeberiaRetornarNoContent() throws Exception {
+        when(facturaService.obtenerPorIdPedido(99L)).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/facturas/pedido/99"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testObtenerPorRut() throws Exception {
+        when(facturaService.obtenerPorRut("12345678-5")).thenReturn(List.of(factura));
+
+        mockMvc.perform(get("/api/v1/facturas/rut/12345678-5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].rut_cliente").value("12345678-5"));
+    }
+
+    @Test
+    public void testObtenerPorRut_SinResultados_DeberiaRetornarNoContent() throws Exception {
+        when(facturaService.obtenerPorRut("12345678-5")).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/facturas/rut/12345678-5"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testObtenerPorEstado() throws Exception {
+        when(facturaService.obtenerPorEstado("EMITIDA")).thenReturn(List.of(factura));
+
+        mockMvc.perform(get("/api/v1/facturas/estado/EMITIDA"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].estado_factura").value("EMITIDA"));
+    }
+
+    @Test
+    public void testObtenerPorEstado_SinResultados_DeberiaRetornarNoContent() throws Exception {
+        when(facturaService.obtenerPorEstado("ANULADA")).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/facturas/estado/ANULADA"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testActualizarFactura() throws Exception {
+        when(facturaService.actualizar(eq(1L), any(Factura.class))).thenReturn(factura);
+
+        mockMvc.perform(put("/api/v1/facturas/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(facturaDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id_factura").value(1L))
+                .andExpect(jsonPath("$.total").value(11900));
+    }
 }

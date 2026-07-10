@@ -127,4 +127,116 @@ class FacturaServiceTest {
     void testValidarRut_RutInvalido() {
         assertFalse(facturaService.validarRut("11111111-9"));
     }
+
+    @Test
+    void testObtenerPorIdPedido() {
+        Long idPedido = 1L;
+        when(facturaRepository.findByIdPedido(idPedido)).thenReturn(java.util.List.of(
+                new Factura(1L, idPedido, "12345678-5", 10000, 1900, 11900, "EMITIDA", null)));
+
+        java.util.List<Factura> facturas = facturaService.obtenerPorIdPedido(idPedido);
+
+        assertNotNull(facturas);
+        assertEquals(1, facturas.size());
+        verify(facturaRepository).findByIdPedido(idPedido);
+    }
+
+    @Test
+    void testObtenerPorRut() {
+        String rut = "12345678-5";
+        when(facturaRepository.findByRutCliente(rut)).thenReturn(java.util.List.of(
+                new Factura(1L, 1L, rut, 10000, 1900, 11900, "EMITIDA", null)));
+
+        java.util.List<Factura> facturas = facturaService.obtenerPorRut(rut);
+
+        assertNotNull(facturas);
+        assertEquals(1, facturas.size());
+        verify(facturaRepository).findByRutCliente(rut);
+    }
+
+    @Test
+    void testObtenerPorRut_ConRutInvalido_DeberiaLanzarBadRequestException() {
+        assertThrows(BadRequestException.class, () -> facturaService.obtenerPorRut("11111111-9"));
+        verify(facturaRepository, never()).findByRutCliente(anyString());
+    }
+
+    @Test
+    void testObtenerPorEstado() {
+        when(facturaRepository.findByEstadoFactura("EMITIDA")).thenReturn(java.util.List.of(
+                new Factura(1L, 1L, "12345678-5", 10000, 1900, 11900, "EMITIDA", null)));
+
+        java.util.List<Factura> facturas = facturaService.obtenerPorEstado("EMITIDA");
+
+        assertNotNull(facturas);
+        assertEquals(1, facturas.size());
+        verify(facturaRepository).findByEstadoFactura("EMITIDA");
+    }
+
+    @Test
+    void testActualizar() {
+        Long id = 1L;
+        Factura existente = new Factura(id, 1L, "12345678-5", 10000, 1900, 11900, "EMITIDA", null);
+        Factura cambios = new Factura(null, 1L, "12345678-5", 20000, 0, 0, "PAGADA", null);
+        when(facturaRepository.findById(id)).thenReturn(Optional.of(existente));
+        when(facturaRepository.save(any(Factura.class))).thenReturn(existente);
+
+        Factura resultado = facturaService.actualizar(id, cambios);
+
+        assertNotNull(resultado);
+        assertEquals(20000, existente.getSubtotal());
+        assertEquals("PAGADA", existente.getEstado_factura());
+        verify(facturaRepository).save(existente);
+    }
+
+    @Test
+    void testActualizar_NoExistente_DeberiaLanzarResourceNotFoundException() {
+        Long id = 99L;
+        when(facturaRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> facturaService.actualizar(id, new Factura(null, 1L, "12345678-5", 10000, 0, 0, null, null)));
+        verify(facturaRepository, never()).save(any(Factura.class));
+    }
+
+    @Test
+    void testActualizar_ConRutInvalido_DeberiaLanzarBadRequestException() {
+        Long id = 1L;
+        Factura existente = new Factura(id, 1L, "12345678-5", 10000, 1900, 11900, "EMITIDA", null);
+        when(facturaRepository.findById(id)).thenReturn(Optional.of(existente));
+
+        Factura cambios = new Factura(null, 1L, "11111111-9", 10000, 0, 0, "PAGADA", null);
+
+        assertThrows(BadRequestException.class, () -> facturaService.actualizar(id, cambios));
+        verify(facturaRepository, never()).save(any(Factura.class));
+    }
+
+    @Test
+    void testActualizar_ConSubtotalCero_DeberiaLanzarBadRequestException() {
+        Long id = 1L;
+        Factura existente = new Factura(id, 1L, "12345678-5", 10000, 1900, 11900, "EMITIDA", null);
+        when(facturaRepository.findById(id)).thenReturn(Optional.of(existente));
+
+        Factura cambios = new Factura(null, 1L, "12345678-5", 0, 0, 0, "PAGADA", null);
+
+        assertThrows(BadRequestException.class, () -> facturaService.actualizar(id, cambios));
+        verify(facturaRepository, never()).save(any(Factura.class));
+    }
+
+    @Test
+    void testEliminar_NoExistente_DeberiaLanzarResourceNotFoundException() {
+        when(facturaRepository.existsById(99L)).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> facturaService.eliminar(99L));
+        verify(facturaRepository, never()).deleteById(anyLong());
+    }
+
+    @Test
+    void testListar_SinResultados_DeberiaRetornarListaVacia() {
+        when(facturaRepository.findAll()).thenReturn(java.util.List.of());
+
+        java.util.List<Factura> facturas = facturaService.listar();
+
+        assertNotNull(facturas);
+        assertTrue(facturas.isEmpty());
+    }
 }

@@ -133,4 +133,34 @@ class TransaccionServiceTest {
         assertThrows(BadRequestException.class, () -> transaccionService.updateEstado(1, "INVALIDO"));
         verify(transaccionRepository, never()).save(any(Transaccion.class));
     }
+
+    @Test
+    void updateEstado_ConIdInexistente_DeberiaLanzarResourceNotFoundException() {
+        when(transaccionRepository.findById(99)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> transaccionService.updateEstado(99, "COMPLETADA"));
+        verify(transaccionRepository, never()).save(any(Transaccion.class));
+    }
+
+    @Test
+    void findAll_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        when(transaccionRepository.findAll()).thenThrow(new RuntimeException("Error de BD"));
+
+        assertThrows(RuntimeException.class, () -> transaccionService.findAll());
+    }
+
+    @Test
+    void save_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        when(pedidoClient.findById(1L)).thenReturn(new PedidoResponse(1L, LocalDateTime.now()));
+        when(transaccionRepository.save(any(Transaccion.class))).thenThrow(new RuntimeException("Error de BD"));
+
+        assertThrows(RuntimeException.class, () -> transaccionService.save(transaccion));
+    }
+
+    @Test
+    void delete_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        doThrow(new RuntimeException("Error de BD")).when(transaccionRepository).deleteById(1);
+
+        assertThrows(RuntimeException.class, () -> transaccionService.delete(1));
+    }
 }

@@ -117,4 +117,12 @@ public class TransaccionControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.estado_pago").value("COMPLETADA"));
     }
+
+    @Test
+    public void testFindAll_SinResultados_DeberiaRetornarNoContent() throws Exception {
+        when(transaccionService.findAll()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/transacciones"))
+                .andExpect(status().isNoContent());
+    }
 }

@@ -125,4 +125,20 @@ public class CarritoItemControllerTest {
 
         verify(carritoItemService, times(1)).delete(1);
     }
+
+    @Test
+    public void testFindAll_SinResultados_DeberiaRetornarNoContent() throws Exception {
+        when(carritoItemService.findAll()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/carrito"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testFindByIdCliente_SinResultados_DeberiaRetornarNoContent() throws Exception {
+        when(carritoItemService.findByIdCliente(99)).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/carrito/cliente/99"))
+                .andExpect(status().isNoContent());
+    }
 }

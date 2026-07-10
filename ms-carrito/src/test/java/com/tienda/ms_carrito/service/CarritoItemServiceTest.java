@@ -164,4 +164,41 @@ class CarritoItemServiceTest {
 
         verify(carritoItemRepository, times(1)).deleteById(1);
     }
+
+    @Test
+    void findAll_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        when(carritoItemRepository.findAll()).thenThrow(new RuntimeException("Error de BD"));
+
+        assertThrows(RuntimeException.class, () -> carritoItemService.findAll());
+    }
+
+    @Test
+    void findByIdCliente_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        when(carritoItemRepository.findByIdCliente(1)).thenThrow(new RuntimeException("Error de BD"));
+
+        assertThrows(RuntimeException.class, () -> carritoItemService.findByIdCliente(1));
+    }
+
+    @Test
+    void getTotalByIdCliente_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        when(carritoItemRepository.findByIdCliente(1)).thenThrow(new RuntimeException("Error de BD"));
+
+        assertThrows(RuntimeException.class, () -> carritoItemService.getTotalByIdCliente(1));
+    }
+
+    @Test
+    void save_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        when(clienteClient.existeCliente(1L)).thenReturn(true);
+        when(productoClient.findById(1)).thenReturn(productoResponse);
+        when(carritoItemRepository.save(any(CarritoItem.class))).thenThrow(new RuntimeException("Error de BD"));
+
+        assertThrows(RuntimeException.class, () -> carritoItemService.save(carritoItem));
+    }
+
+    @Test
+    void delete_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        doThrow(new RuntimeException("Error de BD")).when(carritoItemRepository).deleteById(1);
+
+        assertThrows(RuntimeException.class, () -> carritoItemService.delete(1));
+    }
 }

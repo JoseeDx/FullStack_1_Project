@@ -120,4 +120,38 @@ public class InventarioControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id_inventario").value(1L));
     }
+
+    @Test
+    public void testListarInventario_SinResultados_DeberiaRetornarNoContent() throws Exception {
+        when(inventarioService.listar()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/inventario"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testObtenerBajoStock_SinResultados_DeberiaRetornarNoContent() throws Exception {
+        when(inventarioService.obtenerBajoStock()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/inventario/bajo-stock"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testObtenerPorIdProducto() throws Exception {
+        when(inventarioService.obtenerPorIdProducto(1)).thenReturn(inventario);
+
+        mockMvc.perform(get("/api/v1/inventario/producto/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id_producto").value(1));
+    }
+
+    @Test
+    public void testHayStockSuficiente() throws Exception {
+        when(inventarioService.hayStockSuficiente(1, 20)).thenReturn(true);
+
+        mockMvc.perform(get("/api/v1/inventario/stock-suficiente/1/20"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
 }

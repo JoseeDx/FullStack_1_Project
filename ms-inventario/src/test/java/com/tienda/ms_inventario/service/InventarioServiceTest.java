@@ -132,4 +132,109 @@ class InventarioServiceTest {
         // When y Then
         assertThrows(BadRequestException.class, () -> inventarioService.hayStockSuficiente(1, 0));
     }
+
+    @Test
+    void hayStockSuficiente_ConCantidadMayorAlStock_DeberiaRetornarFalse() {
+        when(inventarioRepository.findByIdProducto(1)).thenReturn(java.util.Optional.of(inventario));
+
+        boolean resultado = inventarioService.hayStockSuficiente(1, 100);
+
+        assertFalse(resultado);
+    }
+
+    @Test
+    void listar_DeberiaRetornarListaDeInventarios() {
+        when(inventarioRepository.findAll()).thenReturn(java.util.List.of(inventario));
+
+        java.util.List<Inventario> resultado = inventarioService.listar();
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        verify(inventarioRepository).findAll();
+    }
+
+    @Test
+    void obtenerPorIdProducto_ConIdExistente_DeberiaRetornarInventario() {
+        when(inventarioRepository.findByIdProducto(1)).thenReturn(java.util.Optional.of(inventario));
+
+        Inventario resultado = inventarioService.obtenerPorIdProducto(1);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.getId_producto());
+    }
+
+    @Test
+    void obtenerPorIdProducto_ConIdInexistente_DeberiaLanzarResourceNotFoundException() {
+        when(inventarioRepository.findByIdProducto(99)).thenReturn(java.util.Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> inventarioService.obtenerPorIdProducto(99));
+    }
+
+    @Test
+    void obtenerBajoStock_DeberiaRetornarListaDeInventariosBajoStock() {
+        when(inventarioRepository.findProductosBajoStock()).thenReturn(java.util.List.of(inventario));
+
+        java.util.List<Inventario> resultado = inventarioService.obtenerBajoStock();
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        verify(inventarioRepository).findProductosBajoStock();
+    }
+
+    @Test
+    void actualizar_ConDatosValidos_DeberiaActualizarCorrectamente() {
+        when(inventarioRepository.findById(1L)).thenReturn(java.util.Optional.of(inventario));
+        when(inventarioRepository.save(any(Inventario.class))).thenReturn(inventario);
+
+        Inventario datosActualizados = new Inventario(null, 1, 80, 10, 100, null);
+        Inventario resultado = inventarioService.actualizar(1L, datosActualizados);
+
+        assertNotNull(resultado);
+        assertEquals(80, inventario.getStock_actual());
+        verify(inventarioRepository).save(inventario);
+    }
+
+    @Test
+    void actualizar_ConIdInexistente_DeberiaLanzarResourceNotFoundException() {
+        when(inventarioRepository.findById(99L)).thenReturn(java.util.Optional.empty());
+
+        Inventario datosActualizados = new Inventario(null, 1, 80, 10, 100, null);
+        assertThrows(ResourceNotFoundException.class, () -> inventarioService.actualizar(99L, datosActualizados));
+        verify(inventarioRepository, never()).save(any(Inventario.class));
+    }
+
+    @Test
+    void actualizar_ConStockActualNegativo_DeberiaLanzarBadRequestException() {
+        when(inventarioRepository.findById(1L)).thenReturn(java.util.Optional.of(inventario));
+
+        Inventario datosActualizados = new Inventario(null, 1, -5, 10, 100, null);
+        assertThrows(BadRequestException.class, () -> inventarioService.actualizar(1L, datosActualizados));
+        verify(inventarioRepository, never()).save(any(Inventario.class));
+    }
+
+    @Test
+    void actualizar_ConStockMaximoMenorAlMinimo_DeberiaLanzarBadRequestException() {
+        when(inventarioRepository.findById(1L)).thenReturn(java.util.Optional.of(inventario));
+
+        Inventario datosActualizados = new Inventario(null, 1, 50, 10, 5, null);
+        assertThrows(BadRequestException.class, () -> inventarioService.actualizar(1L, datosActualizados));
+        verify(inventarioRepository, never()).save(any(Inventario.class));
+    }
+
+    @Test
+    void eliminar_ConIdExistente_DeberiaEliminarInventario() {
+        when(inventarioRepository.existsById(1L)).thenReturn(true);
+
+        inventarioService.eliminar(1L);
+
+        verify(inventarioRepository).deleteById(1L);
+    }
+
+    @Test
+    void eliminar_ConIdInexistente_DeberiaLanzarResourceNotFoundException() {
+        when(inventarioRepository.existsById(99L)).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> inventarioService.eliminar(99L));
+        verify(inventarioRepository, never()).deleteById(anyLong());
+    }
 }

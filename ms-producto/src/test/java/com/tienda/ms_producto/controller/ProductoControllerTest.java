@@ -121,4 +121,12 @@ public class ProductoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id_producto").value(1));
     }
+
+    @Test
+    public void testFindAll_SinResultados_DeberiaRetornarNoContent() throws Exception {
+        when(productoService.findAll()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/productos"))
+                .andExpect(status().isNoContent());
+    }
 }

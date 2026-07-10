@@ -135,4 +135,41 @@ class CategoriaServiceTest {
         assertNotNull(resultado);
         verify(categoriaRepository).save(any(Categoria.class));
     }
+
+    @Test
+    void findAll_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        when(categoriaRepository.findAll()).thenThrow(new RuntimeException("Error de BD"));
+
+        assertThrows(RuntimeException.class, () -> categoriaService.findAll());
+    }
+
+    @Test
+    void save_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        when(categoriaRepository.save(any(Categoria.class))).thenThrow(new RuntimeException("Error de BD"));
+
+        assertThrows(RuntimeException.class, () -> categoriaService.save(categoria));
+    }
+
+    @Test
+    void delete_ConProductosAsociados_DeberiaLanzarBadRequestException() {
+        doThrow(new RuntimeException("foreign key constraint fails")).when(categoriaRepository).deleteById(1);
+
+        assertThrows(BadRequestException.class, () -> categoriaService.delete(1));
+    }
+
+    @Test
+    void delete_ConErrorGenerico_DeberiaLanzarRuntimeException() {
+        doThrow(new RuntimeException("Error de BD")).when(categoriaRepository).deleteById(1);
+
+        assertThrows(RuntimeException.class, () -> categoriaService.delete(1));
+    }
+
+    @Test
+    void desactivar_ConIdInexistente_DeberiaLanzarRuntimeException() {
+        when(productoRepository.findByCategoriaAndActivoTrue(99)).thenReturn(List.of());
+        when(categoriaRepository.findById(99)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> categoriaService.desactivar(99));
+        verify(categoriaRepository, never()).save(any(Categoria.class));
+    }
 }

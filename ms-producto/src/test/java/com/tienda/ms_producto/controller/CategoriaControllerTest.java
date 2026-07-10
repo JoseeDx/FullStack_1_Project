@@ -116,4 +116,12 @@ public class CategoriaControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id_categoria").value(1));
     }
+
+    @Test
+    public void testFindAll_SinResultados_DeberiaRetornarNoContent() throws Exception {
+        when(categoriaService.findAll()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/categorias"))
+                .andExpect(status().isNoContent());
+    }
 }

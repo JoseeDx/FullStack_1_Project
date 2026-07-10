@@ -124,4 +124,25 @@ class ProductoServiceTest {
 
         verify(productoRepository, times(1)).deleteById(1);
     }
+
+    @Test
+    void findAll_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        when(productoRepository.findAll()).thenThrow(new RuntimeException("Error de BD"));
+
+        assertThrows(RuntimeException.class, () -> productoService.findAll());
+    }
+
+    @Test
+    void save_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        when(productoRepository.save(any(Producto.class))).thenThrow(new RuntimeException("Error de BD"));
+
+        assertThrows(RuntimeException.class, () -> productoService.save(producto));
+    }
+
+    @Test
+    void delete_ConErrorEnRepositorio_DeberiaLanzarRuntimeException() {
+        doThrow(new RuntimeException("Error de BD")).when(productoRepository).deleteById(1);
+
+        assertThrows(RuntimeException.class, () -> productoService.delete(1));
+    }
 }
