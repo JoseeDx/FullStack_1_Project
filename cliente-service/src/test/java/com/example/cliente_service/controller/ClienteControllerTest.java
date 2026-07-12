@@ -59,6 +59,7 @@ public class ClienteControllerTest {
         clienteDTO.setId(1L);
         clienteDTO.setNombre("Juan Perez");
         clienteDTO.setCorreo("juan@test.com");
+        clienteDTO.setIdRol(1L);
     }
 
     @Test
