@@ -55,6 +55,11 @@ public class CategoriaService {
     //Guarda una categoria
     public Categoria save(Categoria categoria){
         log.info("Guardando categoria: {}", categoria.getNombre_categoria());
+        if (categoria.getActivo() == null) {
+            // Solo aplica a categorías nuevas: activar() / desactivar() / actualizar() siempre
+            // pasan por aquí con el campo ya definido, así que esto nunca los pisa.
+            categoria.setActivo(true);
+        }
         try {
             return categoriaRepository.save(categoria);//guarda la categoria
         } catch (Exception e) {
@@ -68,6 +73,10 @@ public class CategoriaService {
         log.info("Actualizando categoria con ID: {}", id);
         Categoria existing = findById(id);//verifica si existe por la id
         existing.setNombre_categoria(datosActualizados.getNombre_categoria());
+        // Solo pisa el estado activo/inactivo si el cliente lo mandó explícitamente en el body
+        if (datosActualizados.getActivo() != null) {
+            existing.setActivo(datosActualizados.getActivo());
+        }
         return save(existing);
     }
 

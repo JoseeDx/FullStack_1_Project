@@ -42,7 +42,7 @@ public class ProductoDTO {
     public Producto toModel() {
         Categoria cat = new Categoria();
         cat.setId_categoria(id_categoria);
-        return new Producto(id_producto, nombre_producto, descripcion_producto, precio_producto, cat, true);                                                                                 
+        return new Producto(id_producto, nombre_producto, descripcion_producto, precio_producto, cat, activo);
     }
 
     public static ProductoDTO fromModel(Producto p){

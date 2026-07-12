@@ -48,6 +48,11 @@ public class ProductoService {
     //Guarda producto nuevo o actualiza
     public Producto save(Producto producto){
         log.info("Guardando producto: {}", producto.getNombre_producto());
+        if (producto.getActivo() == null) {
+            // Solo aplica a productos nuevos: activar() / desactivar() / actualizar() siempre
+            // pasan por aquí con el campo ya definido, así que esto nunca los pisa.
+            producto.setActivo(true);
+        }
         try {
             return productoRepository.save(producto);
             //si el producto tiene id, actualiza y si no crea uno nuevo
@@ -65,6 +70,10 @@ public class ProductoService {
         existing.setDescripcion_producto(datosActualizados.getDescripcion_producto());
         existing.setPrecio_producto(datosActualizados.getPrecio_producto());
         existing.setCategoria(datosActualizados.getCategoria());
+        // Solo pisa el estado activo/inactivo si el cliente lo mandó explícitamente en el body
+        if (datosActualizados.getActivo() != null) {
+            existing.setActivo(datosActualizados.getActivo());
+        }
         return save(existing);
     }
 

@@ -6,6 +6,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -13,6 +14,12 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    // 0. Ruta o recurso estático inexistente (ej. una URL mal escrita): 404, no 500
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNoResourceFound(NoResourceFoundException ex) {
+        return buildResponseEntity(HttpStatus.NOT_FOUND, "El recurso solicitado no existe");
+    }
 
     // 1. Atrapa los errores de validación de tu DTO (@NotNull, @Min, etc.)
     @ExceptionHandler(MethodArgumentNotValidException.class)

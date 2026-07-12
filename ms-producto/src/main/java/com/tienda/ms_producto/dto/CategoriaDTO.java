@@ -25,7 +25,7 @@ public class CategoriaDTO {
     private Boolean activo;
 
     public Categoria toModel(){
-        return new Categoria(id_categoria, nombre_categoria, true);
+        return new Categoria(id_categoria, nombre_categoria, activo);
     }
 
     public static CategoriaDTO fromModel(Categoria c){
