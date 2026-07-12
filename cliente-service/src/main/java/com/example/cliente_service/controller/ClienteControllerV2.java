@@ -28,6 +28,7 @@ public class ClienteControllerV2 {
     private ClienteModelAssembler assembler;
 
     @GetMapping
+@Operation(summary = "Listar todos los clientes (HATEOAS)", description = "Retorna la colección de clientes con sus enlaces HATEOAS.")
 public CollectionModel<EntityModel<ClienteDTO>> listarTodos() {
     List<EntityModel<ClienteDTO>> clientes = clienteService.listar().stream() // O el nombre de tu método
             // 1. Si tu servicio devuelve Cliente (entidad), primero lo conviertes a DTO usando tu método estándar:

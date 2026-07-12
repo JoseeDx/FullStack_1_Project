@@ -14,11 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tienda.ms_carrito.assemblers.CarritoItemModelAssembler;
+import com.tienda.ms_carrito.dto.CarritoItemDTO;
 import com.tienda.ms_carrito.model.CarritoItem;
 import com.tienda.ms_carrito.service.CarritoItemService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("carrito/v2")
+@Tag(name = "Carrito V2", description = "Operaciones de carrito con soporte HATEOAS")
 public class CarritoItemControllerV2 {
 
     private final CarritoItemService carritoItemService;
@@ -31,18 +35,21 @@ public class CarritoItemControllerV2 {
     }
 
     @GetMapping
-    public CollectionModel<EntityModel<CarritoItem>> listarCarrito() {
+    @Operation(summary = "Listar items del carrito (HATEOAS)", description = "Retorna la colección de items del carrito con sus enlaces HATEOAS.")
+    public CollectionModel<EntityModel<CarritoItemDTO>> listarCarrito() {
         logger.info("V2 GET /carrito - Listando items del carrito");
-        List<EntityModel<CarritoItem>> items = carritoItemService.findAll().stream()
+        List<EntityModel<CarritoItemDTO>> items = carritoItemService.findAll().stream()
+                .map(CarritoItemDTO::fromModel)
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
         return CollectionModel.of(items, linkTo(methodOn(CarritoItemControllerV2.class).listarCarrito()).withSelfRel());
     }
 
     @GetMapping("/{id}")
-    public EntityModel<CarritoItem> obtenerCarritoItem(@PathVariable Integer id) {
+    @Operation(summary = "Obtener un item del carrito por ID (HATEOAS)", description = "Retorna un item del carrito específico con su enlace correspondiente.")
+    public EntityModel<CarritoItemDTO> obtenerCarritoItem(@PathVariable Integer id) {
         logger.info("V2 GET /carrito/{} - Obteniendo item del carrito", id);
         CarritoItem carritoItem = carritoItemService.findById(id);
-        return assembler.toModel(carritoItem);
+        return assembler.toModel(CarritoItemDTO.fromModel(carritoItem));
     }
 }

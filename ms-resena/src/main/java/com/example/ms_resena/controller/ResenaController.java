@@ -4,6 +4,7 @@ import com.example.ms_resena.dto.ResenaDTO;
 import com.example.ms_resena.service.ResenaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class ResenaController {
 
     @PostMapping
     @Operation(summary = "Crear una nueva reseña", description = "Permite a un cliente calificar (1 a 5 estrellas) y comentar un producto que ha comprado.")
-    public ResponseEntity<ResenaDTO> crearResena(@RequestBody ResenaDTO resenaDTO) {
+    public ResponseEntity<ResenaDTO> crearResena(@Valid @RequestBody ResenaDTO resenaDTO) {
         ResenaDTO nuevaResena = resenaService.crearResena(resenaDTO);
         return new ResponseEntity<>(nuevaResena, HttpStatus.CREATED);
     }

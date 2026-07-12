@@ -7,13 +7,13 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 import com.tienda.ms_facturacion.controller.FacturaControllerV2;
-import com.tienda.ms_facturacion.model.Factura;
+import com.tienda.ms_facturacion.dto.FacturaDTO;
 
 @Component
-public class FacturaModelAssembler implements RepresentationModelAssembler<Factura, EntityModel<Factura>> {
+public class FacturaModelAssembler implements RepresentationModelAssembler<FacturaDTO, EntityModel<FacturaDTO>> {
 
     @Override
-    public EntityModel<Factura> toModel(Factura factura) {
+    public EntityModel<FacturaDTO> toModel(FacturaDTO factura) {
         return EntityModel.of(factura,
                 linkTo(methodOn(FacturaControllerV2.class).obtenerFactura(factura.getId_factura())).withSelfRel(),
                 linkTo(methodOn(FacturaControllerV2.class).listarFacturas()).withRel("facturas"));

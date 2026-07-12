@@ -30,8 +30,8 @@ public class PedidoControllerV2 {
         return CollectionModel.of(pedidos, linkTo(methodOn(PedidoControllerV2.class).listarTodos()).withSelfRel());
     }
 
-    // Dentro de PedidoControllerV2.java
-@GetMapping("/{id}")
+    @GetMapping("/{id}")
+@Operation(summary = "Obtener un pedido por ID (HATEOAS)", description = "Retorna un pedido específico con su enlace correspondiente.")
 public EntityModel<PedidoDTO> obtenerPorId(@PathVariable Long id) {
     // 1. Llamada al servicio (devuelve Entidad)
     var pedido = service.buscarPorId(id); 

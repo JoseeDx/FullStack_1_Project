@@ -14,11 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tienda.ms_producto.assemblers.CategoriaModelAssembler;
+import com.tienda.ms_producto.dto.CategoriaDTO;
 import com.tienda.ms_producto.model.Categoria;
 import com.tienda.ms_producto.service.CategoriaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("categorias/v2")
+@Tag(name = "Categorías V2", description = "Operaciones de categorías con soporte HATEOAS")
 public class CategoriaControllerV2 {
 
     private final CategoriaService categoriaService;
@@ -31,18 +35,21 @@ public class CategoriaControllerV2 {
     }
 
     @GetMapping
-    public CollectionModel<EntityModel<Categoria>> listarCategorias() {
+    @Operation(summary = "Listar categorías (HATEOAS)", description = "Retorna la colección de categorías con sus enlaces HATEOAS.")
+    public CollectionModel<EntityModel<CategoriaDTO>> listarCategorias() {
         logger.info("V2 GET /categorias - Listando categorias");
-        List<EntityModel<Categoria>> categorias = categoriaService.findAll().stream()
+        List<EntityModel<CategoriaDTO>> categorias = categoriaService.findAll().stream()
+                .map(CategoriaDTO::fromModel)
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
         return CollectionModel.of(categorias, linkTo(methodOn(CategoriaControllerV2.class).listarCategorias()).withSelfRel());
     }
 
     @GetMapping("/{id}")
-    public EntityModel<Categoria> obtenerCategoria(@PathVariable Integer id) {
+    @Operation(summary = "Obtener una categoría por ID (HATEOAS)", description = "Retorna una categoría específica con su enlace correspondiente.")
+    public EntityModel<CategoriaDTO> obtenerCategoria(@PathVariable Integer id) {
         logger.info("V2 GET /categorias/{} - Obteniendo categoria", id);
         Categoria categoria = categoriaService.findById(id);
-        return assembler.toModel(categoria);
+        return assembler.toModel(CategoriaDTO.fromModel(categoria));
     }
 }

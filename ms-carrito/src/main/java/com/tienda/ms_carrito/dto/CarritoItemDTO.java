@@ -10,11 +10,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.server.core.Relation;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Relation(value = "carritoItem", collectionRelation = "carritoItemList")
 public class CarritoItemDTO {
 
     private Integer id_carrito;

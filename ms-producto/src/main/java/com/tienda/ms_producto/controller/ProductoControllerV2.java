@@ -14,11 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tienda.ms_producto.assemblers.ProductoModelAssembler;
+import com.tienda.ms_producto.dto.ProductoDTO;
 import com.tienda.ms_producto.model.Producto;
 import com.tienda.ms_producto.service.ProductoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("productos/v2")
+@Tag(name = "Productos V2", description = "Operaciones de productos con soporte HATEOAS")
 public class ProductoControllerV2 {
 
     private final ProductoService productoService;
@@ -31,18 +35,21 @@ public class ProductoControllerV2 {
     }
 
     @GetMapping
-    public CollectionModel<EntityModel<Producto>> listarProductos() {
+    @Operation(summary = "Listar productos (HATEOAS)", description = "Retorna la colección de productos con sus enlaces HATEOAS.")
+    public CollectionModel<EntityModel<ProductoDTO>> listarProductos() {
         logger.info("V2 GET /productos - Listando productos");
-        List<EntityModel<Producto>> productos = productoService.findAll().stream()
+        List<EntityModel<ProductoDTO>> productos = productoService.findAll().stream()
+                .map(ProductoDTO::fromModel)
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
         return CollectionModel.of(productos, linkTo(methodOn(ProductoControllerV2.class).listarProductos()).withSelfRel());
     }
 
     @GetMapping("/{id}")
-    public EntityModel<Producto> obtenerProducto(@PathVariable Integer id) {
+    @Operation(summary = "Obtener un producto por ID (HATEOAS)", description = "Retorna un producto específico con su enlace correspondiente.")
+    public EntityModel<ProductoDTO> obtenerProducto(@PathVariable Integer id) {
         logger.info("V2 GET /productos/{} - Obteniendo producto", id);
         Producto producto = productoService.findById(id);
-        return assembler.toModel(producto);
+        return assembler.toModel(ProductoDTO.fromModel(producto));
     }
 }

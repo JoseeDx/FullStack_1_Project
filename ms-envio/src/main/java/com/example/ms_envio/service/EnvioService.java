@@ -1,6 +1,7 @@
 package com.example.ms_envio.service;
 
 import com.example.ms_envio.dto.EnvioDTO;
+import com.example.ms_envio.exception.ResourceNotFoundException;
 import com.example.ms_envio.model.Envio;
 import com.example.ms_envio.repository.EnvioRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,7 @@ public class EnvioService {
     public EnvioDTO obtenerPorId(Integer id) {
         log.info("Buscando envío con ID: {}", id);
         Envio entidad = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Envío no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Envío no encontrado"));
         return new EnvioDTO(entidad.getIdEnvio(), entidad.getIdPedido(), entidad.getDireccion(), entidad.getCiudad(), entidad.getEstado(), entidad.getFechaDespacho());
     }
 
@@ -45,7 +46,7 @@ public class EnvioService {
     public EnvioDTO actualizarEstado(Integer id, String nuevoEstado) {
         log.info("Actualizando el estado del envío ID: {} a {}", id, nuevoEstado);
         Envio entidad = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Envío no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Envío no encontrado"));
         
         entidad.setEstado(nuevoEstado);
         if (nuevoEstado.equalsIgnoreCase("EN_RUTA") && entidad.getFechaDespacho() == null) {

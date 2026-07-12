@@ -45,6 +45,12 @@ public class GlobalExceptionHandler {
         return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    // 4. Atrapa cualquier otro error no controlado (500)
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor");
+    }
+
     // Método auxiliar para armar respuestas de error limpias
     private ResponseEntity<Map<String, Object>> buildResponseEntity(HttpStatus status, String message) {
         Map<String, Object> response = new HashMap<>();

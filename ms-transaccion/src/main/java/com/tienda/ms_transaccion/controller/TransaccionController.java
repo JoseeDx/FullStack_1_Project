@@ -3,6 +3,8 @@ package com.tienda.ms_transaccion.controller;
 import com.tienda.ms_transaccion.dto.TransaccionDTO;
 import com.tienda.ms_transaccion.model.Transaccion;
 import com.tienda.ms_transaccion.service.TransaccionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @RestController //controlador REST - todas las respuestas se convierten en JSON
 @RequestMapping("/api/v1/transacciones") //ruta
+@Tag(name = "Transacciones", description = "Gestión de transacciones de pago")
 public class TransaccionController {
 
     // Registrar eventos importantes en cada endpoint
@@ -26,6 +29,7 @@ public class TransaccionController {
     }
 
     @GetMapping //sin parametros, se usa el "/api/v1/transacciones", retorna la lista completa
+    @Operation(summary = "Listar todas las transacciones", description = "Devuelve todas las transacciones registradas.")
     public ResponseEntity<List<TransaccionDTO>> findAll() {
         log.info("GET /transacciones - Listando todas las transacciones");
         List<TransaccionDTO> transacciones = transaccionService.findAll()
@@ -40,6 +44,7 @@ public class TransaccionController {
     }
 
     @GetMapping("/{id}") //se le agrega la id
+    @Operation(summary = "Obtener una transacción por ID", description = "Devuelve el detalle de una transacción específica.")
     public ResponseEntity<TransaccionDTO> findById(@PathVariable Integer id) { //pathvariable extrae la id de la url
         log.info("GET /transacciones/{} - Buscando transaccion", id);
         Transaccion transaccion = transaccionService.findById(id); //busca la entidad
@@ -47,6 +52,7 @@ public class TransaccionController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear una transacción", description = "Registra una nueva transacción de pago, validando el pedido asociado.")
     public ResponseEntity<TransaccionDTO> save(@Valid @RequestBody TransaccionDTO dto) { //valid activa las validaciones del dto, request body
         log.info("POST /transacciones - Creando transaccion");
         Transaccion saved = transaccionService.save(dto.toModel()); //convierte dto a entidad
@@ -54,6 +60,7 @@ public class TransaccionController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar una transacción", description = "Modifica los datos de una transacción existente.")
     public ResponseEntity<TransaccionDTO> update(@PathVariable Integer id, @Valid @RequestBody TransaccionDTO dto) { // recibe la id por el url y los datos nuevos por el body
         log.info("PUT /transacciones/{} - Actualizando transaccion", id);
         return ResponseEntity.ok(TransaccionDTO.fromModel(transaccionService.actualizar(id, dto.toModel())));
@@ -61,6 +68,7 @@ public class TransaccionController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar una transacción", description = "Elimina una transacción por su ID.")
     public ResponseEntity<Void> delete(@PathVariable Integer id) { //void pq no retorna nada en el postman!
         log.info("DELETE /transacciones/{} - Eliminando transaccion", id);
         transaccionService.delete(id);
@@ -68,6 +76,7 @@ public class TransaccionController {
     }
 
     @PatchMapping("/{id}/estado")
+    @Operation(summary = "Actualizar el estado de una transacción", description = "Cambia el estado de pago de una transacción existente.")
     public ResponseEntity<TransaccionDTO> updateEstado(@PathVariable Integer id, @RequestParam String estado) { //solo cambia el estado (actualizacion parcial), request param recibe el estado como parametro
         log.info("PATCH /transacciones/{}/estado - Cambiando estado a {}", id, estado);
         return ResponseEntity.ok(TransaccionDTO.fromModel(transaccionService.updateEstado(id, estado))); //llama al service que valida el estado y lo actualiza, retorna 200 ok con la transaccion actualizada

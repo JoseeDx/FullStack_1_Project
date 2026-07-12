@@ -7,13 +7,13 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 import com.tienda.ms_producto.controller.ProductoControllerV2;
-import com.tienda.ms_producto.model.Producto;
+import com.tienda.ms_producto.dto.ProductoDTO;
 
 @Component
-public class ProductoModelAssembler implements RepresentationModelAssembler<Producto, EntityModel<Producto>> {
+public class ProductoModelAssembler implements RepresentationModelAssembler<ProductoDTO, EntityModel<ProductoDTO>> {
 
     @Override
-    public EntityModel<Producto> toModel(Producto producto) {
+    public EntityModel<ProductoDTO> toModel(ProductoDTO producto) {
         return EntityModel.of(producto,
                 linkTo(methodOn(ProductoControllerV2.class).obtenerProducto(producto.getId_producto())).withSelfRel(),
                 linkTo(methodOn(ProductoControllerV2.class).listarProductos()).withRel("productos"));

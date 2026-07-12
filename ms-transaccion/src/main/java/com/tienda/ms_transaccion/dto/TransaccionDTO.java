@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor //constructor vacio
 @AllArgsConstructor //constructor con parametros
 @Builder //permite crear un objeto
+@Relation(value = "transaccion", collectionRelation = "transaccionList")
 public class TransaccionDTO {
 
     private Integer id_transaccion; //sin validacion pq la base de datos lo crea solo

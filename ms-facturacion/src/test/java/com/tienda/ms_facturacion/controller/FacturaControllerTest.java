@@ -49,7 +49,11 @@ public class FacturaControllerTest {
                 null,
                 1L,
                 "12345678-5",
-                10000
+                10000,
+                null,
+                null,
+                null,
+                null
         );
 
         FacturaController controller = new FacturaController(facturaService);

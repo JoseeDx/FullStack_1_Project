@@ -4,6 +4,8 @@ import com.tienda.ms_producto.dto.ProductoDTO;
 import com.tienda.ms_producto.model.Producto;
 import com.tienda.ms_producto.service.ProductoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.util.List;
 
 @RestController//controlador rest todas las respuestas se convierten a json
 @RequestMapping("/api/v1/productos")
+@Tag(name = "Productos", description = "Gestión del catálogo de productos")
 public class ProductoController {
 
     //Para registrar eventos
@@ -35,6 +38,7 @@ public class ProductoController {
     }
 
     @GetMapping//Trae todos los productos de la base de datos
+    @Operation(summary = "Listar todos los productos", description = "Devuelve el catálogo completo de productos.")
     public ResponseEntity<List<ProductoDTO>> findAll(){
         log.info("Obteniendo todos los productos.");
         List<ProductoDTO> productos = productoService.findAll() //Le pide a service que lo haga
@@ -49,6 +53,7 @@ public class ProductoController {
 
     //Busca un producto por su id
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener un producto por ID", description = "Devuelve el detalle de un producto específico.")
     public ResponseEntity<ProductoDTO> findById(@PathVariable Integer id) {//Saca el id de la url
         log.info("Obteniendo producto con ID: {}",id);
         Producto producto = productoService.findById(id);//le pide al service que busque
@@ -58,6 +63,7 @@ public class ProductoController {
 
     //Crea un nuevo producto
     @PostMapping
+    @Operation(summary = "Crear un producto", description = "Registra un nuevo producto en el catálogo.")
     public ResponseEntity<ProductoDTO> save(@Valid @RequestBody ProductoDTO dto) {//json recibido a dto y activa las validaciones dto
         log.info("Creando nuevo producto: {}", dto.getNombre_producto());
         Producto saved = productoService.save(dto.toModel());//dto a entidad para guardarlo
@@ -67,6 +73,7 @@ public class ProductoController {
 
     //Actualiza los campos de un producto
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un producto", description = "Modifica los datos de un producto existente.")
     public ResponseEntity<ProductoDTO> update(@PathVariable Integer id, @Valid @RequestBody ProductoDTO dto) {
         log.info("Actualizando producto con ID: {}", id);
         return ResponseEntity.ok(ProductoDTO.fromModel(productoService.actualizar(id, dto.toModel())));
@@ -75,14 +82,16 @@ public class ProductoController {
 
     //Elimina producto por su id
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un producto", description = "Elimina un producto por su ID.")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {//void pq no retorna nada
         log.info("Eliminando producto con ID: {}", id);
-        productoService.delete(id);//le pide al service que lo borre 
+        productoService.delete(id);//le pide al service que lo borre
         return ResponseEntity.noContent().build();//retorna 204, eliminado sin contenido
     }
 
     //Activar producto por su id
     @PatchMapping("/{id}/activar")
+    @Operation(summary = "Activar un producto", description = "Marca un producto como activo/disponible en el catálogo.")
     public ResponseEntity<ProductoDTO> activar(@PathVariable Integer id) {
         log.info("Activando producto con ID: {}", id);
         return ResponseEntity.ok(ProductoDTO.fromModel(productoService.activar(id)));
@@ -90,6 +99,7 @@ public class ProductoController {
 
     //Desactivar producto por su id
     @PatchMapping("/{id}/desactivar")
+    @Operation(summary = "Desactivar un producto", description = "Marca un producto como inactivo/no disponible en el catálogo.")
     public ResponseEntity<ProductoDTO> desactivar(@PathVariable Integer id) {
         log.info("Desactivando producto con ID: {}", id);
         return ResponseEntity.ok(ProductoDTO.fromModel(productoService.desactivar(id)));

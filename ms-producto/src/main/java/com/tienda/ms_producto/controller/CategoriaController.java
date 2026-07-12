@@ -4,6 +4,8 @@ import com.tienda.ms_producto.dto.CategoriaDTO;
 import com.tienda.ms_producto.model.Categoria;
 import com.tienda.ms_producto.service.CategoriaService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.util.List;
 
 @RestController//Clase rest rescibe todas las respuesta en json
 @RequestMapping("/api/v1/categorias")
+@Tag(name = "Categorías", description = "Gestión de categorías de productos")
 public class CategoriaController {
 
     private static Logger log = LoggerFactory.getLogger(CategoriaController.class);
@@ -34,6 +37,7 @@ public class CategoriaController {
     }
 
     @GetMapping//Lista todas las categorias
+    @Operation(summary = "Listar todas las categorías", description = "Devuelve todas las categorías de productos registradas.")
     public ResponseEntity<List<CategoriaDTO>> findAll(){
         log.info("GET /categorias - Listando todas las categorias");
         List<CategoriaDTO> categorias = categoriaService.findAll()//Le pide a service que lo haga
@@ -47,8 +51,9 @@ public class CategoriaController {
         return ResponseEntity.ok(categorias); //si hay productos retorna la lista 200
     }
 
-    //Busca categoria por id 
+    //Busca categoria por id
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener una categoría por ID", description = "Devuelve el detalle de una categoría específica.")
     public ResponseEntity<CategoriaDTO> findById(@PathVariable Integer id) { //saca la id de la url
         log.info("GET /categorias/{} - Buscando categoria", id);
         Categoria categoria = categoriaService.findById(id); //service busca 
@@ -58,6 +63,7 @@ public class CategoriaController {
 
     //Crea una nueva categoria
     @PostMapping
+    @Operation(summary = "Crear una categoría", description = "Registra una nueva categoría de productos.")
     public ResponseEntity<CategoriaDTO> save(@Valid @RequestBody CategoriaDTO dto) {//json recibido a dto y activa las validaciones dto
         log.info("POST /categorias - Creando categoria: {}", dto.getNombre_categoria());
         Categoria saved = categoriaService.save(dto.toModel());//dto a entidad para guardar en base de datos
@@ -65,8 +71,9 @@ public class CategoriaController {
         //Convierte la entidad a dto y retorna 201                 codigo http 201
     }
 
-    //Actualiza una categoria 
+    //Actualiza una categoria
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar una categoría", description = "Modifica los datos de una categoría existente.")
     public ResponseEntity<CategoriaDTO> update(@PathVariable Integer id, @Valid @RequestBody CategoriaDTO dto) {
         log.info("PUT /categorias/{} - Actualizando categoria", id);
         return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.actualizar(id, dto.toModel())));
@@ -75,6 +82,7 @@ public class CategoriaController {
 
     //Borrar categoria por su id
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar una categoría", description = "Elimina una categoría por su ID.")
     public ResponseEntity<Void> delete(@PathVariable Integer id) { //void pq no retorna nada
         log.info("DELETE /categorias/{} - Eliminando categoria", id);
         categoriaService.delete(id);//Le pide a service que la borre
@@ -82,15 +90,17 @@ public class CategoriaController {
         //Retorna 204, eliminado sin contenido
     }
 
-    //Activar categoria 
+    //Activar categoria
     @PatchMapping("/{id}/activar")
+    @Operation(summary = "Activar una categoría", description = "Marca una categoría como activa.")
     public ResponseEntity<CategoriaDTO> activar(@PathVariable Integer id) {
         log.info("PATCH /categorias/{}/activar - Activando categoria", id);
         return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.activar(id)));
     }
 
-    //Desactivar categoria 
+    //Desactivar categoria
     @PatchMapping("/{id}/desactivar")
+    @Operation(summary = "Desactivar una categoría", description = "Marca una categoría como inactiva.")
     public ResponseEntity<CategoriaDTO> desactivar(@PathVariable Integer id) {
         log.info("PATCH /categorias/{}/desactivar - Desactivando categoria", id);
         return ResponseEntity.ok(CategoriaDTO.fromModel(categoriaService.desactivar(id)));//service maneja toda la logica 

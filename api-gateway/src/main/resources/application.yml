@@ -12,27 +12,27 @@ spring:
             - id: cliente-service
               uri: http://cliente-service:9091
               predicates:
-                - Path=/api/v1/clientes/**
-                
+                - Path=/api/v1/clientes/**, /api/v2/clientes/**
+
             - id: ms-producto
               uri: http://ms-producto:8081
               predicates:
-                - Path=/api/v1/productos/**, /api/v1/categorias/**
-                
+                - Path=/api/v1/productos/**, /api/v1/categorias/**, /productos/v2/**, /categorias/v2/**
+
             - id: ms-carrito
               uri: http://ms-carrito:8084
               predicates:
-                - Path=/api/v1/carrito/**
-                
+                - Path=/api/v1/carrito/**, /carrito/v2/**
+
             - id: ms-pedido
               uri: http://ms-pedido:9094
               predicates:
-                - Path=/api/v1/pedidos/**
-                
+                - Path=/api/v1/pedidos/**, /api/v2/pedidos/**
+
             - id: ms-transaccion
               uri: http://ms-transaccion:8085
               predicates:
-                - Path=/api/v1/transacciones/**
+                - Path=/api/v1/transacciones/**, /transacciones/v2/**
               
             - id: ms-inventario
               uri: http://ms-inventario:8083

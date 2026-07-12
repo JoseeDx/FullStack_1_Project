@@ -8,11 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.server.core.Relation;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Relation(value = "categoria", collectionRelation = "categoriaList")
 public class CategoriaDTO {
     private Integer id_categoria;
 

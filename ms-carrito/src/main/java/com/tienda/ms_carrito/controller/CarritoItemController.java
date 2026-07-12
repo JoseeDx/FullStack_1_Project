@@ -4,6 +4,8 @@ import com.tienda.ms_carrito.dto.CarritoItemDTO;
 import com.tienda.ms_carrito.model.CarritoItem;
 import com.tienda.ms_carrito.service.CarritoItemService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.slf4j.Logger;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @RestController //esta clase es un controlador rest, todas las respuestas se convierten en json
 @RequestMapping("/api/v1/carrito")
+@Tag(name = "Carrito", description = "Gestión del carrito de compras")
 public class CarritoItemController {
 
     //registrar eventos
@@ -28,6 +31,7 @@ public class CarritoItemController {
     }
 
     @GetMapping //trae todos los items del carrito
+    @Operation(summary = "Listar todos los items del carrito", description = "Devuelve todos los items de carrito registrados en el sistema.")
     public ResponseEntity<List<CarritoItemDTO>> findAll() {
         log.info("GET /carrito - Listando todos los items del carrito"); //se llama al endpoint
         List<CarritoItemDTO> items = carritoItemService.findAll() //le pide al service todos los items
@@ -41,13 +45,15 @@ public class CarritoItemController {
     }
 
     @GetMapping("/{id}") //busca por una id en especifico
-    public ResponseEntity<CarritoItemDTO> findById(@PathVariable Integer id) { //extrae id de la url 
+    @Operation(summary = "Obtener un item del carrito por ID", description = "Devuelve el detalle de un item específico del carrito.")
+    public ResponseEntity<CarritoItemDTO> findById(@PathVariable Integer id) { //extrae id de la url
         log.info("GET /carrito/{} - Buscando item del carrito", id);
         CarritoItem item = carritoItemService.findById(id); //busca el item en la base de datos
         return ResponseEntity.ok(CarritoItemDTO.fromModel(item));//la convierte a dto y la devuelve
     }
 
     @GetMapping("/cliente/{id_cliente}") //busca los items de un cliente
+    @Operation(summary = "Listar items del carrito por cliente", description = "Devuelve todos los items de carrito asociados a un cliente específico.")
     public ResponseEntity<List<CarritoItemDTO>> findByIdCliente(@PathVariable Integer id_cliente) {
         log.info("GET /carrito/cliente/{} - Buscando items del cliente", id_cliente);
         List<CarritoItemDTO> items = carritoItemService.findByIdCliente(id_cliente)
@@ -61,12 +67,14 @@ public class CarritoItemController {
     }
 
     @GetMapping("/total/{id_cliente}")//calcula el total a pagar
+    @Operation(summary = "Calcular el total del carrito", description = "Calcula el monto total a pagar por los items del carrito de un cliente.")
     public ResponseEntity<Double> getTotalByIdCliente(@PathVariable Integer id_cliente) {
         log.info("GET /carrito/total/{} - Calculando total del carrito", id_cliente);
         return ResponseEntity.ok(carritoItemService.getTotalByIdCliente(id_cliente));//llama al metodo en service y retorna el total
     }
 
     @PostMapping
+    @Operation(summary = "Agregar un item al carrito", description = "Agrega un producto al carrito de un cliente, validando su existencia contra cliente-service y ms-producto.")
     public ResponseEntity<CarritoItemDTO> save(@Valid @RequestBody CarritoItemDTO dto) {//validaciones dto
         log.info("POST /carrito - Agregando item al carrito");
         CarritoItem saved = carritoItemService.save(dto.toModel());//convierte el dto a entidad y lo guarda
@@ -75,6 +83,7 @@ public class CarritoItemController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un item del carrito", description = "Modifica la cantidad u otros datos de un item existente del carrito.")
     public ResponseEntity<CarritoItemDTO> update(@PathVariable Integer id, @Valid @RequestBody CarritoItemDTO dto) {
         //recibe la id por la url y los datos nuevos por el body
         log.info("PUT /carrito/{} - Actualizando item del carrito", id);
@@ -83,6 +92,7 @@ public class CarritoItemController {
     }
 
     @DeleteMapping("/{id}") //borra xd
+    @Operation(summary = "Eliminar un item del carrito", description = "Elimina un item del carrito por su ID.")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {//es un void porque no retorna nada
         log.info("DELETE /carrito/{} - Eliminando item del carrito", id);
         carritoItemService.delete(id);//llama al service

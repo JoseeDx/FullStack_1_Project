@@ -1,6 +1,8 @@
 package com.example.ms_descuento.service;
 
 import com.example.ms_descuento.dto.DescuentoDTO;
+import com.example.ms_descuento.exception.BadRequestException;
+import com.example.ms_descuento.exception.ResourceNotFoundException;
 import com.example.ms_descuento.model.Descuento;
 import com.example.ms_descuento.repository.DescuentoRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +24,11 @@ public class DescuentoService {
     public Double calcularDescuento(String codigo, Double montoTotal) {
         log.info("Calculando descuento para el código: {} con monto total: {}", codigo, montoTotal);
         Descuento descuento = repository.findByCodigoCupon(codigo)
-                .orElseThrow(() -> new RuntimeException("Cupón no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cupón no encontrado"));
 
         if (!descuento.getActivo() || descuento.getFechaExpiracion().isBefore(LocalDateTime.now())) {
             log.warn("El cupón {} es inválido o ha expirado", codigo);
-            throw new RuntimeException("El cupón no es válido o ha expirado");
+            throw new BadRequestException("El cupón no es válido o ha expirado");
         }
 
         Double montoDescontado = montoTotal * (descuento.getPorcentaje() / 100);
@@ -46,7 +48,7 @@ public class DescuentoService {
     public DescuentoDTO obtenerPorId(Integer id) {
         log.info("Buscando descuento con ID: {}", id);
         Descuento entidad = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Descuento no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Descuento no encontrado"));
         return new DescuentoDTO(entidad.getIdDescuento(), entidad.getCodigoCupon(), entidad.getPorcentaje(), entidad.getFechaExpiracion(), entidad.getActivo());
     }
 
@@ -62,7 +64,7 @@ public class DescuentoService {
     public DescuentoDTO actualizar(Integer id, DescuentoDTO dto) {
         log.info("Actualizando descuento con ID: {}", id);
         Descuento entidad = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Descuento no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Descuento no encontrado"));
         entidad.setCodigoCupon(dto.getCodigoCupon());
         entidad.setPorcentaje(dto.getPorcentaje());
         entidad.setFechaExpiracion(dto.getFechaExpiracion());
