@@ -51,12 +51,12 @@ Cada microservicio expone su propia UI de Swagger. En ejecución local (fuera de
 | Microservicio | Swagger UI (local) |
 |---|---|
 | cliente-service | http://localhost:9091/swagger-ui.html |
-| ms-producto | http://localhost:8081/swagger-ui.html |
-| ms-carrito | http://localhost:8084/swagger-ui.html |
-| ms-inventario | http://localhost:8083/swagger-ui.html |
+| ms-producto | http://localhost:8081/doc/swagger-ui.html |
+| ms-carrito | http://localhost:8084/doc/swagger-ui.html |
+| ms-inventario | http://localhost:8083/doc/swagger-ui.html |
 | ms-pedido | http://localhost:9094/swagger-ui.html |
-| ms-transaccion | http://localhost:8085/swagger-ui.html |
-| ms-facturacion | http://localhost:8086/swagger-ui.html |
+| ms-transaccion | http://localhost:8085/doc/swagger-ui.html |
+| ms-facturacion | http://localhost:8086/doc/swagger-ui.html |
 | ms-resena | http://localhost:8087/swagger-ui.html |
 | ms-envio | http://localhost:8088/swagger-ui.html |
 | ms-descuento | http://localhost:8082/swagger-ui.html |
