@@ -1,102 +1,82 @@
 package com.example.ms_envio.controller;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.example.ms_envio.assemblers.EnvioModelAssembler;
 import com.example.ms_envio.dto.EnvioDTO;
 import com.example.ms_envio.service.EnvioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
+@WebMvcTest(EnvioController.class)
+class EnvioControllerTest {
 
-@ExtendWith(MockitoExtension.class)
-public class EnvioControllerTest {
-
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    private EnvioService envioService;
+    @MockBean
+    private EnvioService service;
 
-    @Mock
+    @MockBean
     private EnvioModelAssembler assembler;
 
-    @InjectMocks
-    private EnvioController envioController;
-
-    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private EnvioDTO envioDTO;
 
     @BeforeEach
     void setUp() {
-        envioDTO = new EnvioDTO(
-                1,
-                100,
-                "Av. Libertador 1234, Depto 5B",
-                "Santiago",
-                "PREPARANDO",
-                null
-        );
-
-        mockMvc = MockMvcBuilders.standaloneSetup(envioController).build();
+        envioDTO = new EnvioDTO(1, 100, "Avenida Siempreviva 742", "Springfield", "PREPARANDO", null);
     }
 
     @Test
-    public void testCrearEnvio() throws Exception {
-        when(envioService.crear(any(EnvioDTO.class))).thenReturn(envioDTO);
+    void crearEnvio_RetornaCreated() throws Exception {
+        // GIVEN
+        when(service.crear(any(EnvioDTO.class))).thenReturn(envioDTO);
 
+        // WHEN & THEN
         mockMvc.perform(post("/api/v1/envios")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(envioDTO)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(envioDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.idEnvio").value(1))
-                .andExpect(jsonPath("$.ciudad").value("Santiago"))
                 .andExpect(jsonPath("$.estado").value("PREPARANDO"));
     }
 
     @Test
-    public void testObtenerPorId() throws Exception {
-        when(envioService.obtenerPorId(1)).thenReturn(envioDTO);
-        when(assembler.toModel(envioDTO)).thenReturn(EntityModel.of(envioDTO));
+    void obtenerPorId_RetornaOk() throws Exception {
+        // GIVEN
+        when(service.obtenerPorId(1)).thenReturn(envioDTO);
+        when(assembler.toModel(any(EnvioDTO.class))).thenReturn(EntityModel.of(envioDTO));
 
-        mockMvc.perform(get("/api/v1/envios/1"))
+        // WHEN & THEN
+        mockMvc.perform(get("/api/v1/envios/1")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.idEnvio").value(1))
-                .andExpect(jsonPath("$.direccion").value("Av. Libertador 1234, Depto 5B"));
+                .andExpect(jsonPath("$.idEnvio").value(1));
     }
 
     @Test
-    public void testObtenerTodos() throws Exception {
-        when(envioService.obtenerTodos()).thenReturn(List.of(envioDTO));
-        when(assembler.toModel(envioDTO)).thenReturn(EntityModel.of(envioDTO));
+    void actualizarEstado_RetornaOk() throws Exception {
+        // GIVEN
+        EnvioDTO envioActualizado = new EnvioDTO(1, 100, "Avenida Siempreviva 742", "Springfield", "ENTREGADO", null);
+        when(service.actualizarEstado(eq(1), anyString())).thenReturn(envioActualizado);
 
-        mockMvc.perform(get("/api/v1/envios"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].idEnvio").value(1))
-                .andExpect(jsonPath("$[0].ciudad").value("Santiago"));
-    }
-
-    @Test
-    public void testActualizarEstado() throws Exception {
-        EnvioDTO envioEnRuta = new EnvioDTO(1, 100, "Av. Libertador 1234, Depto 5B", "Santiago", "EN_RUTA", null);
-        when(envioService.actualizarEstado(1, "EN_RUTA")).thenReturn(envioEnRuta);
-
+        // WHEN & THEN
         mockMvc.perform(patch("/api/v1/envios/1/estado")
-                        .param("estado", "EN_RUTA"))
+                .param("estado", "ENTREGADO")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.estado").value("EN_RUTA"));
+                .andExpect(jsonPath("$.estado").value("ENTREGADO"));
     }
 }

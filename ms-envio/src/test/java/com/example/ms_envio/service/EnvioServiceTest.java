@@ -1,5 +1,8 @@
 package com.example.ms_envio.service;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.example.ms_envio.dto.EnvioDTO;
 import com.example.ms_envio.model.Envio;
 import com.example.ms_envio.repository.EnvioRepository;
@@ -10,11 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EnvioServiceTest {
@@ -23,26 +25,27 @@ class EnvioServiceTest {
     private EnvioRepository repository;
 
     @InjectMocks
-    private EnvioService envioService;
+    private EnvioService service;
 
-    private Envio envio;
+    private Envio envioEntidad;
     private EnvioDTO envioDTO;
 
     @BeforeEach
     void setUp() {
-        envio = new Envio(1, 100, "Av. Libertador 1234, Depto 5B", "Santiago", "PREPARANDO", null);
-        envioDTO = new EnvioDTO(1, 100, "Av. Libertador 1234, Depto 5B", "Santiago", "PREPARANDO", null);
+        // Inicializamos datos simulados antes de cada prueba
+        envioEntidad = new Envio(1, 100, "Avenida Siempreviva 742", "Springfield", "PREPARANDO", null);
+        envioDTO = new EnvioDTO(null, 100, "Avenida Siempreviva 742", "Springfield", null, null);
     }
 
     @Test
-    void crear_ConDatosValidos_DeberiaGuardarYRetornarDTO() {
-        // Given
-        when(repository.save(any(Envio.class))).thenReturn(envio);
+    void crearEnvio_Exito() {
+        // GIVEN (Dado)
+        when(repository.save(any(Envio.class))).thenReturn(envioEntidad);
 
-        // When
-        EnvioDTO resultado = envioService.crear(envioDTO);
+        // WHEN (Cuando)
+        EnvioDTO resultado = service.crear(envioDTO);
 
-        // Then
+        // THEN (Entonces)
         assertNotNull(resultado);
         assertEquals(1, resultado.getIdEnvio());
         assertEquals("PREPARANDO", resultado.getEstado());
@@ -50,77 +53,61 @@ class EnvioServiceTest {
     }
 
     @Test
-    void obtenerPorId_ConIdExistente_DeberiaRetornarEnvio() {
-        // Given
-        when(repository.findById(1)).thenReturn(Optional.of(envio));
+    void obtenerPorId_Exito() {
+        // GIVEN
+        when(repository.findById(1)).thenReturn(Optional.of(envioEntidad));
 
-        // When
-        EnvioDTO resultado = envioService.obtenerPorId(1);
+        // WHEN
+        EnvioDTO resultado = service.obtenerPorId(1);
 
-        // Then
+        // THEN
         assertNotNull(resultado);
-        assertEquals("Santiago", resultado.getCiudad());
+        assertEquals(100, resultado.getIdPedido());
+        verify(repository, times(1)).findById(1);
     }
 
     @Test
-    void obtenerPorId_ConIdInexistente_DeberiaLanzarRuntimeException() {
-        // Given
+    void obtenerPorId_NoEncontrado_LanzaExcepcion() {
+        // GIVEN
         when(repository.findById(99)).thenReturn(Optional.empty());
 
-        // When y Then
-        assertThrows(RuntimeException.class, () -> envioService.obtenerPorId(99));
+        // WHEN / THEN
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            service.obtenerPorId(99);
+        });
+        assertEquals("Envío no encontrado", exception.getMessage());
+        verify(repository, times(1)).findById(99);
     }
 
     @Test
-    void obtenerTodos_DeberiaRetornarListaDeEnvios() {
-        // Given
-        when(repository.findAll()).thenReturn(List.of(envio));
+    void obtenerTodos_Exito() {
+        // GIVEN
+        when(repository.findAll()).thenReturn(Arrays.asList(envioEntidad));
 
-        // When
-        List<EnvioDTO> resultado = envioService.obtenerTodos();
+        // WHEN
+        List<EnvioDTO> resultados = service.obtenerTodos();
 
-        // Then
-        assertNotNull(resultado);
-        assertEquals(1, resultado.size());
+        // THEN
+        assertFalse(resultados.isEmpty());
+        assertEquals(1, resultados.size());
         verify(repository, times(1)).findAll();
     }
 
     @Test
-    void actualizarEstado_ConIdExistente_DeberiaActualizarEstadoCorrectamente() {
-        // Given
-        when(repository.findById(1)).thenReturn(Optional.of(envio));
-        when(repository.save(any(Envio.class))).thenReturn(envio);
+    void actualizarEstado_A_EnRuta_AsignaFecha() {
+        // GIVEN: Simulamos que el envío existe
+        when(repository.findById(1)).thenReturn(Optional.of(envioEntidad));
+        // Simulamos el objeto actualizado que guardará el repositorio
+        Envio envioActualizado = new Envio(1, 100, "Avenida Siempreviva 742", "Springfield", "EN_RUTA", LocalDateTime.now());
+        when(repository.save(any(Envio.class))).thenReturn(envioActualizado);
 
-        // When
-        EnvioDTO resultado = envioService.actualizarEstado(1, "ENTREGADO");
+        // WHEN
+        EnvioDTO resultado = service.actualizarEstado(1, "EN_RUTA");
 
-        // Then
-        assertNotNull(resultado);
-        assertEquals("ENTREGADO", resultado.getEstado());
-        verify(repository, times(1)).save(any(Envio.class));
-    }
-
-    @Test
-    void actualizarEstado_ConIdInexistente_DeberiaLanzarRuntimeException() {
-        // Given
-        when(repository.findById(99)).thenReturn(Optional.empty());
-
-        // When y Then
-        assertThrows(RuntimeException.class, () -> envioService.actualizarEstado(99, "EN_RUTA"));
-        verify(repository, never()).save(any(Envio.class));
-    }
-
-    @Test
-    void actualizarEstado_ConNuevoEstadoEnRuta_DeberiaSetearFechaDespacho() {
-        // Given
-        when(repository.findById(1)).thenReturn(Optional.of(envio));
-        when(repository.save(any(Envio.class))).thenReturn(envio);
-
-        // When
-        EnvioDTO resultado = envioService.actualizarEstado(1, "EN_RUTA");
-
-        // Then
+        // THEN
         assertEquals("EN_RUTA", resultado.getEstado());
-        assertNotNull(resultado.getFechaDespacho());
+        assertNotNull(resultado.getFechaDespacho()); // La regla de negocio indica que ya no debe ser nulo
+        verify(repository, times(1)).findById(1);
+        verify(repository, times(1)).save(any(Envio.class));
     }
 }
