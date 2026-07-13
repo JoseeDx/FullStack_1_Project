@@ -5,7 +5,6 @@ import com.example.cliente_service.dto.ClienteDTO;
 import com.example.cliente_service.model.Cliente;
 import com.example.cliente_service.model.Roles;
 import com.example.cliente_service.service.ClienteService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,7 @@ public class ClienteControllerV2Test {
 
     private ClienteModelAssembler assembler;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+
 
     // Variables de prueba
     private Cliente clienteEntidad;
