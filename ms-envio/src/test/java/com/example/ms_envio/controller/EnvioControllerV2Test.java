@@ -1,15 +1,15 @@
 package com.example.ms_envio.controller;
 
-import com.example.ms_envio.assemblers.EnvioModelAssemblerV2;
+import com.example.ms_envio.assemblers.EnvioModelAssembler;
 import com.example.ms_envio.dto.EnvioDTO;
 import com.example.ms_envio.service.EnvioService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,12 +31,12 @@ public class EnvioControllerV2Test {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private EnvioService service;
 
-    // ¡Importante! Mockeamos el assembler de la V2 para que el test levante correctamente
-    @MockBean
-    private EnvioModelAssemblerV2 assemblerV2;
+    // Mockeamos el assembler (compartido con la V1) para que el test levante correctamente
+    @MockitoBean
+    private EnvioModelAssembler assemblerV2;
 
     @Autowired
     private ObjectMapper objectMapper;

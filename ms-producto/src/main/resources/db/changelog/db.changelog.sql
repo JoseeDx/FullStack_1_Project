@@ -41,3 +41,19 @@ ALTER TABLE categoria ADD COLUMN activo BOOLEAN NOT NULL DEFAULT TRUE;
 
 --changeset equipo:6
 ALTER TABLE producto ADD COLUMN activo BOOLEAN NOT NULL DEFAULT TRUE;
+
+--changeset equipo:7
+-- Marca de control para que el DataLoader (datafaker) sepa si ya generó sus datos,
+-- sin depender del conteo de filas (que Liquibase ya deja en > 0)
+CREATE TABLE seed_control (
+    id INT PRIMARY KEY,
+    datafaker_seeded BOOLEAN NOT NULL DEFAULT FALSE
+);
+INSERT INTO seed_control (id, datafaker_seeded) VALUES (1, FALSE);
+
+--changeset equipo:8
+-- Si la tabla ya tiene más filas que las 10 sembradas por Liquibase, es porque el DataLoader
+-- ya había generado datos en una corrida anterior (antes de existir esta marca): no debe repetirse.
+UPDATE seed_control
+SET datafaker_seeded = TRUE
+WHERE (SELECT COUNT(*) FROM producto) > 10;

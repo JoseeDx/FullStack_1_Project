@@ -1,6 +1,6 @@
 package com.example.ms_envio.controller;
 
-import com.example.ms_envio.assemblers.EnvioModelAssemblerV2;
+import com.example.ms_envio.assemblers.EnvioModelAssembler;
 import com.example.ms_envio.dto.EnvioDTO;
 import com.example.ms_envio.service.EnvioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,9 +25,8 @@ public class EnvioControllerV2 {
     @Autowired
     private EnvioService service;
 
-    // Inyectamos el Assembler específico de la V2 para que el HATEOAS no apunte a la V1
     @Autowired
-    private EnvioModelAssemblerV2 assemblerV2;
+    private EnvioModelAssembler assemblerV2;
 
     @PostMapping
     @Operation(summary = "Crear un envío (V2)", description = "Registra un nuevo envío para un pedido utilizando la interfaz V2.")

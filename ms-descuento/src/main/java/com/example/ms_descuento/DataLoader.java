@@ -4,6 +4,7 @@ import com.example.ms_descuento.model.Descuento;
 import com.example.ms_descuento.repository.DescuentoRepository;
 import net.datafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -12,14 +13,19 @@ import java.time.LocalDateTime;
 public class DataLoader implements CommandLineRunner {
 
     private final DescuentoRepository descuentoRepository;
+    private final JdbcTemplate jdbcTemplate;
 
-    DataLoader(DescuentoRepository descuentoRepository) {
+    DataLoader(DescuentoRepository descuentoRepository, JdbcTemplate jdbcTemplate) {
         this.descuentoRepository = descuentoRepository;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        if (descuentoRepository.count() > 0) {
+        // Marca de control propia, independiente de cuántas filas haya insertado Liquibase
+        Boolean yaSembrado = jdbcTemplate.queryForObject(
+                "SELECT datafaker_seeded FROM seed_control WHERE id = 1", Boolean.class);
+        if (Boolean.TRUE.equals(yaSembrado)) {
             return;
         }
 
@@ -35,5 +41,7 @@ public class DataLoader implements CommandLineRunner {
 
             descuentoRepository.save(descuento);
         }
+
+        jdbcTemplate.update("UPDATE seed_control SET datafaker_seeded = TRUE WHERE id = 1");
     }
 }

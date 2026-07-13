@@ -22,3 +22,19 @@ INSERT INTO carrito_item (id_cliente, id_producto, precio_unitario, fecha_agrega
 (4, 4, 39990, '2025-01-13 11:20:00', 2),
 (5, 2, 49990, '2025-01-14 16:00:00', 1),
 (5, 5, 59990, '2025-01-14 16:30:00', 3);
+
+--changeset equipo:3
+-- Marca de control para que el DataLoader (datafaker) sepa si ya generó sus datos,
+-- sin depender del conteo de filas (que Liquibase ya deja en > 0)
+CREATE TABLE seed_control (
+    id INT PRIMARY KEY,
+    datafaker_seeded BOOLEAN NOT NULL DEFAULT FALSE
+);
+INSERT INTO seed_control (id, datafaker_seeded) VALUES (1, FALSE);
+
+--changeset equipo:4
+-- Si la tabla ya tiene más filas que las 10 sembradas por Liquibase, es porque el DataLoader
+-- ya había generado datos en una corrida anterior (antes de existir esta marca): no debe repetirse.
+UPDATE seed_control
+SET datafaker_seeded = TRUE
+WHERE (SELECT COUNT(*) FROM carrito_item) > 10;

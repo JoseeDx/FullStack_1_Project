@@ -2,6 +2,7 @@ package com.tienda.ms_producto;
 
 import net.datafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.tienda.ms_producto.model.Categoria;
@@ -16,15 +17,20 @@ public class DataLoader implements CommandLineRunner {
 
     private final CategoriaRepository categoriaRepository;
     private final ProductoRepository productoRepository;
+    private final JdbcTemplate jdbcTemplate;
 
-    DataLoader(CategoriaRepository categoriaRepository, ProductoRepository productoRepository) {
+    DataLoader(CategoriaRepository categoriaRepository, ProductoRepository productoRepository, JdbcTemplate jdbcTemplate) {
         this.categoriaRepository = categoriaRepository;
         this.productoRepository = productoRepository;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        if (categoriaRepository.count() > 0 || productoRepository.count() > 0) {
+        // Marca de control propia, independiente de cuántas filas haya insertado Liquibase
+        Boolean yaSembrado = jdbcTemplate.queryForObject(
+                "SELECT datafaker_seeded FROM seed_control WHERE id = 1", Boolean.class);
+        if (Boolean.TRUE.equals(yaSembrado)) {
             return;
         }
 
@@ -48,6 +54,8 @@ public class DataLoader implements CommandLineRunner {
 
             productoRepository.save(producto);
         }
+
+        jdbcTemplate.update("UPDATE seed_control SET datafaker_seeded = TRUE WHERE id = 1");
     }
 
     private Categoria nuevaCategoria(String nombre) {
