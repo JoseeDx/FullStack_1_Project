@@ -1,6 +1,5 @@
 package com.example.ms_envio.controller;
 
-import com.example.ms_envio.assemblers.EnvioModelAssembler;
 import com.example.ms_envio.dto.EnvioDTO;
 import com.example.ms_envio.service.EnvioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,13 +7,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -25,9 +22,6 @@ public class EnvioController {
     @Autowired
     private EnvioService service;
 
-    @Autowired
-    private EnvioModelAssembler assembler;
-
     @PostMapping
     @Operation(summary = "Crear un envío", description = "Registra un nuevo envío para un pedido, con estado inicial PREPARANDO.")
     public ResponseEntity<EnvioDTO> crear(@Valid @RequestBody EnvioDTO dto) {
@@ -36,21 +30,17 @@ public class EnvioController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener un envío por ID", description = "Devuelve el detalle de un envío junto con sus enlaces HATEOAS.")
-    public ResponseEntity<EntityModel<EnvioDTO>> obtenerPorId(@PathVariable Integer id) {
+    @Operation(summary = "Obtener un envío por ID", description = "Devuelve el detalle de un envío específico.")
+    public ResponseEntity<EnvioDTO> obtenerPorId(@PathVariable Integer id) {
         log.info("Petición REST recibida: Obtener envío por ID");
-        EnvioDTO dto = service.obtenerPorId(id);
-        return ResponseEntity.ok(assembler.toModel(dto));
+        return ResponseEntity.ok(service.obtenerPorId(id));
     }
 
     @GetMapping
     @Operation(summary = "Listar todos los envíos", description = "Devuelve todos los envíos registrados en el sistema.")
-    public ResponseEntity<List<EntityModel<EnvioDTO>>> obtenerTodos() {
+    public ResponseEntity<List<EnvioDTO>> obtenerTodos() {
         log.info("Petición REST recibida: Obtener todos los envíos");
-        List<EntityModel<EnvioDTO>> recursos = service.obtenerTodos().stream()
-                .map(assembler::toModel)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(recursos);
+        return ResponseEntity.ok(service.obtenerTodos());
     }
 
     @PatchMapping("/{id}/estado")
