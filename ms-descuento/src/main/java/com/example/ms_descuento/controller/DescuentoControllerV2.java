@@ -1,6 +1,6 @@
 package com.example.ms_descuento.controller;
 
-import com.example.ms_descuento.assemblers.DescuentoModelAssemblerV2;
+import com.example.ms_descuento.assemblers.DescuentoModelAssembler;
 import com.example.ms_descuento.dto.DescuentoDTO;
 import com.example.ms_descuento.service.DescuentoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +27,7 @@ public class DescuentoControllerV2 {
     private DescuentoService service;
 
     @Autowired
-    private DescuentoModelAssemblerV2 assemblerV2;
+    private DescuentoModelAssembler assemblerV2;
 
     @PostMapping
     @Operation(summary = "Crear un cupón de descuento (V2)", description = "Registra un nuevo cupón de descuento utilizando la interfaz V2.")

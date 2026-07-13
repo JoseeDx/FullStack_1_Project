@@ -1,6 +1,6 @@
 package com.example.ms_descuento.controller;
 
-import com.example.ms_descuento.assemblers.DescuentoModelAssemblerV2;
+import com.example.ms_descuento.assemblers.DescuentoModelAssembler;
 import com.example.ms_descuento.dto.DescuentoDTO;
 import com.example.ms_descuento.service.DescuentoService;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,14 +29,14 @@ public class DescuentoControllerV2Test {
 
     private MockMvc mockMvc;
     private DescuentoService service;
-    private DescuentoModelAssemblerV2 assembler;
+    private DescuentoModelAssembler assembler;
 
     private DescuentoDTO descuentoDTO;
 
     @BeforeEach
     void setUp() {
         service = mock(DescuentoService.class);
-        assembler = mock(DescuentoModelAssemblerV2.class);
+        assembler = mock(DescuentoModelAssembler.class);
 
         // Datos de prueba
         descuentoDTO = new DescuentoDTO(1, "PROMO10", 10.0, LocalDateTime.now().plusDays(5), true);

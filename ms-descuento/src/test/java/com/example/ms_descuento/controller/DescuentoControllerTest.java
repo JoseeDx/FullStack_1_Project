@@ -4,7 +4,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-import com.example.ms_descuento.assemblers.DescuentoModelAssembler;
 import com.example.ms_descuento.dto.DescuentoDTO;
 import com.example.ms_descuento.service.DescuentoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,9 +28,6 @@ public class DescuentoControllerTest {
 
     @Mock
     private DescuentoService descuentoService;
-
-    @Mock
-    private DescuentoModelAssembler assembler;
 
     @InjectMocks
     private DescuentoController descuentoController;
@@ -70,7 +65,6 @@ public class DescuentoControllerTest {
     @Test
     public void testObtenerPorId() throws Exception {
         when(descuentoService.obtenerPorId(1)).thenReturn(descuentoDTO);
-        when(assembler.toModel(descuentoDTO)).thenReturn(EntityModel.of(descuentoDTO));
 
         mockMvc.perform(get("/api/v1/descuentos/1"))
                 .andExpect(status().isOk())
@@ -81,7 +75,6 @@ public class DescuentoControllerTest {
     @Test
     public void testObtenerTodos() throws Exception {
         when(descuentoService.obtenerTodos()).thenReturn(List.of(descuentoDTO));
-        when(assembler.toModel(descuentoDTO)).thenReturn(EntityModel.of(descuentoDTO));
 
         mockMvc.perform(get("/api/v1/descuentos"))
                 .andExpect(status().isOk())

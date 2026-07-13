@@ -1,6 +1,5 @@
 package com.example.ms_descuento.controller;
 
-import com.example.ms_descuento.assemblers.DescuentoModelAssembler;
 import com.example.ms_descuento.dto.DescuentoDTO;
 import com.example.ms_descuento.service.DescuentoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,14 +7,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @RestController
@@ -26,9 +24,6 @@ public class DescuentoController {
     @Autowired
     private DescuentoService service;
 
-    @Autowired
-    private DescuentoModelAssembler assembler;
-
     @PostMapping
     @Operation(summary = "Crear un cupón de descuento", description = "Registra un nuevo cupón con su porcentaje y fecha de expiración.")
     public ResponseEntity<DescuentoDTO> crear(@Valid @RequestBody DescuentoDTO dto) {
@@ -36,24 +31,18 @@ public class DescuentoController {
         return new ResponseEntity<>(service.crear(dto), HttpStatus.CREATED);
     }
 
-    // HATEOAS implementado solo en GET según rúbrica
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener un descuento por ID", description = "Devuelve el detalle de un cupón de descuento junto con sus enlaces HATEOAS.")
-    public ResponseEntity<EntityModel<DescuentoDTO>> obtenerPorId(@PathVariable Integer id) {
+    @Operation(summary = "Obtener un descuento por ID", description = "Devuelve el detalle de un cupón de descuento.")
+    public ResponseEntity<DescuentoDTO> obtenerPorId(@PathVariable Integer id) {
         log.info("Petición REST para obtener descuento por ID recibida");
-        DescuentoDTO dto = service.obtenerPorId(id);
-        return ResponseEntity.ok(assembler.toModel(dto));
+        return ResponseEntity.ok(service.obtenerPorId(id));
     }
 
-    // HATEOAS implementado solo en GET según rúbrica
     @GetMapping
     @Operation(summary = "Listar todos los descuentos", description = "Devuelve todos los cupones de descuento registrados.")
-    public ResponseEntity<List<EntityModel<DescuentoDTO>>> obtenerTodos() {
+    public ResponseEntity<List<DescuentoDTO>> obtenerTodos() {
         log.info("Petición REST para obtener todos los descuentos recibida");
-        List<EntityModel<DescuentoDTO>> recursos = service.obtenerTodos().stream()
-                .map(assembler::toModel)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(recursos);
+        return ResponseEntity.ok(service.obtenerTodos());
     }
 
     @PutMapping("/{id}")
