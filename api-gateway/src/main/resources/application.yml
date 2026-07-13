@@ -52,9 +52,9 @@ spring:
             - id: ms-descuento
               uri: http://ms-descuento:8082
               predicates:
-                - Path=/api/v1/descuentos/**
+                - Path=/api/v1/descuentos/** , /api/v2/descuentos/**
 
             - id: ms-envio
               uri: http://ms-envio:8088
               predicates:
-                - Path=/api/v1/envios/**
+                - Path=/api/v1/envios/** , /api/v2/envios/**
