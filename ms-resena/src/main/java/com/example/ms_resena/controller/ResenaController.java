@@ -27,6 +27,13 @@ public class ResenaController {
         return new ResponseEntity<>(nuevaResena, HttpStatus.CREATED);
     }
 
+    @GetMapping
+    @Operation(summary = "Obtener todas las reseñas", description = "Devuelve una lista de todas las reseñas registradas en el sistema.")
+    public ResponseEntity<List<ResenaDTO>> listarResenas() {
+        List<ResenaDTO> resenas = resenaService.listar();
+        return ResponseEntity.ok(resenas);
+    }
+
     @GetMapping("/producto/{idProducto}")
     @Operation(summary = "Obtener reseñas por producto", description = "Devuelve una lista de todas las valoraciones asociadas a un ID de producto específico.")
     public ResponseEntity<List<ResenaDTO>> obtenerResenasPorProducto(@PathVariable Long idProducto) {

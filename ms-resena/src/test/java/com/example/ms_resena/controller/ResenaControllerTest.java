@@ -74,6 +74,17 @@ public class ResenaControllerTest {
     }
 
     @Test
+    public void testListarResenas() throws Exception {
+        when(resenaService.listar()).thenReturn(List.of(resenaDTO));
+
+        mockMvc.perform(get("/api/v1/resenas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].idResena").value(1L))
+                .andExpect(jsonPath("$[0].idProducto").value(10L))
+                .andExpect(jsonPath("$[0].calificacion").value(5));
+    }
+
+    @Test
     public void testEliminarResena() throws Exception {
         doNothing().when(resenaService).eliminarResena(1L);
 
